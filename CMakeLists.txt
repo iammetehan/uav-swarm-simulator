@@ -22,6 +22,10 @@ set(PROJECT_SOURCES
         src/UAVSwarmSimulator.cpp
         include/UAVSwarmSimulator.h
         ui/UAVSwarmSimulator.ui
+        src/SelectMapDialog.cpp
+        include/SelectMapDialog.h
+        ui/SelectMapDialog.ui
+        include/Definitions.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
