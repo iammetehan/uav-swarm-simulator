@@ -20,13 +20,18 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(PROJECT_SOURCES
         main.cpp
         src/UAVSwarmSimulator.cpp
-        include/UAVSwarmSimulator.h
-        ui/UAVSwarmSimulator.ui
         src/SelectMapDialog.cpp
+        src/Viewer.cpp
+        src/Scene.cpp
+        include/UAVSwarmSimulator.h
         include/SelectMapDialog.h
-        ui/SelectMapDialog.ui
         include/Definitions.h
+        include/Viewer.h
+        include/Scene.h
+        ui/UAVSwarmSimulator.ui
+        ui/SelectMapDialog.ui
 )
+
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(UAVSwarmSimulator

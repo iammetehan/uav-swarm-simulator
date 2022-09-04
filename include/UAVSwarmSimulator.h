@@ -3,6 +3,7 @@
 
 #include "Definitions.h"
 #include <QMainWindow>
+#include <QGraphicsScene>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class UAVSwarmSimulator; }
@@ -18,6 +19,7 @@ public:
 
 private:
     Data::Map m_map;
+    QGraphicsScene* m_scene;
 
 private slots:
     void SelectMap();

@@ -9,6 +9,9 @@ UAVSwarmSimulator::UAVSwarmSimulator(QWidget *parent)
 {
     ui->setupUi(this);
 
+    m_scene = new QGraphicsScene(this);
+    ui->view->setScene(m_scene);
+
     connect(ui->selectMap, SIGNAL(clicked()), this, SLOT(SelectMap()));
 }
 
@@ -18,6 +21,7 @@ void UAVSwarmSimulator::SelectMap()
     if (QDialog::Accepted == selectMapDialog.exec())
     {
         m_map = selectMapDialog.Map();
+        m_scene->addPixmap(QPixmap::fromImage(m_map.Image()));
     }
 }
 
