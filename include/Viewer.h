@@ -3,11 +3,17 @@
 
 #include <QGraphicsView>
 
-class Viewer : public QGraphicsView
+namespace Display
+{
+    class Viewer;
+}
+
+
+class Display::Viewer : public QGraphicsView
 {
     Q_OBJECT
 public:
-    Viewer();
+    Viewer(QWidget* parent = nullptr);
 };
 
 #endif // VIEWER_H

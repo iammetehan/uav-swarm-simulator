@@ -9,7 +9,7 @@ UAVSwarmSimulator::UAVSwarmSimulator(QWidget *parent)
 {
     ui->setupUi(this);
 
-    m_scene = new QGraphicsScene(this);
+    m_scene = new Display::Scene(this);
     ui->view->setScene(m_scene);
 
     connect(ui->selectMap, SIGNAL(clicked()), this, SLOT(SelectMap()));

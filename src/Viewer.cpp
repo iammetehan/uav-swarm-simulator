@@ -1,6 +1,7 @@
 #include "Viewer.h"
 
-Viewer::Viewer()
+Display::Viewer::Viewer(QWidget *parent)
+    : QGraphicsView (parent)
 {
 
 }

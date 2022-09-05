@@ -21,6 +21,7 @@ set(PROJECT_SOURCES
         main.cpp
         src/UAVSwarmSimulator.cpp
         src/SelectMapDialog.cpp
+        src/Definitions.cpp
         src/Viewer.cpp
         src/Scene.cpp
         include/UAVSwarmSimulator.h

@@ -2,6 +2,7 @@
 #define UAVSWARMSIMULATOR_H
 
 #include "Definitions.h"
+#include "Scene.h"
 #include <QMainWindow>
 #include <QGraphicsScene>
 
@@ -19,7 +20,7 @@ public:
 
 private:
     Data::Map m_map;
-    QGraphicsScene* m_scene;
+    Display::Scene* m_scene;
 
 private slots:
     void SelectMap();
