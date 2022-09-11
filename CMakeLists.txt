@@ -21,6 +21,9 @@ set(PROJECT_SOURCES
         main.cpp
         src/UAVSwarmSimulator.cpp
         src/SelectMapDialog.cpp
+        src/AddNewUAVDialog.cpp
+        src/AddNewThreatDialog.cpp
+        src/ManageSwarmDialog.cpp
         src/Definitions.cpp
         src/SimItem.cpp
         src/UAV.cpp
@@ -29,6 +32,9 @@ set(PROJECT_SOURCES
         src/Scene.cpp
         include/UAVSwarmSimulator.h
         include/SelectMapDialog.h
+        include/AddNewUAVDialog.h
+        include/AddNewThreatDialog.h
+        include/ManageSwarmDialog.h
         include/Definitions.h
         include/SimItem.h
         include/UAV.h
@@ -37,6 +43,9 @@ set(PROJECT_SOURCES
         include/Scene.h
         ui/UAVSwarmSimulator.ui
         ui/SelectMapDialog.ui
+        ui/AddNewUAVDialog.ui
+        ui/AddNewThreatDialog.ui
+        ui/ManageSwarmDialog.ui
 )
 
 

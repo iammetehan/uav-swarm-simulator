@@ -43,21 +43,21 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="manageSwarm">
           <property name="text">
            <string>Manage Swarm</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QPushButton" name="addNewUAV">
           <property name="text">
            <string>Add New UAV </string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_4">
+         <widget class="QPushButton" name="addNewThreat">
           <property name="text">
            <string>Add New Thread</string>
           </property>

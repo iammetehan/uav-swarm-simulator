@@ -24,6 +24,9 @@ private:
 
 private slots:
     void SelectMap();
+    void AddNewUAV();
+    void AddNewThreat();
+    void ManageSwarm();
 
 private:
     Ui::UAVSwarmSimulator *ui;
