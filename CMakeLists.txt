@@ -24,6 +24,7 @@ set(PROJECT_SOURCES
         src/Definitions.cpp
         src/SimItem.cpp
         src/UAV.cpp
+        src/Threat.cpp
         src/Viewer.cpp
         src/Scene.cpp
         include/UAVSwarmSimulator.h
@@ -31,6 +32,7 @@ set(PROJECT_SOURCES
         include/Definitions.h
         include/SimItem.h
         include/UAV.h
+        include/Threat.h
         include/Viewer.h
         include/Scene.h
         ui/UAVSwarmSimulator.ui

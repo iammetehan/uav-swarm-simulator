@@ -34,6 +34,7 @@ namespace Item
 {
     class SimItem;
     class UAV;
+    class Threat;
     constexpr QSize UAVImageSize() {return QSize(24, 24);};
 }
 
