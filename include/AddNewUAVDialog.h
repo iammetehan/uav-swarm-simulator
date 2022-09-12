@@ -2,6 +2,7 @@
 #define ADDNEWUAVDIALOG_H
 
 #include <QDialog>
+#include "Definitions.h"
 
 namespace Ui {
 class AddNewUAVDialog;
@@ -14,6 +15,9 @@ class AddNewUAVDialog : public QDialog
 public:
     explicit AddNewUAVDialog(QWidget *parent = nullptr);
     ~AddNewUAVDialog();
+
+public:
+    const Item::UAV NewUAV();
 
 private:
     Ui::AddNewUAVDialog *ui;

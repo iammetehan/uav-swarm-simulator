@@ -4,9 +4,12 @@
 #include <cstddef>
 #include <QImage>
 #include <QGraphicsItem>
+#include <QValidator>
 
 namespace Data
 {
+    [[nodiscard]] QRegularExpressionValidator* IntegerRegularExp();
+
     class Map
     {
     public:

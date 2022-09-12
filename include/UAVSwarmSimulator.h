@@ -22,6 +22,7 @@ private:
     Data::Map m_map;
     Display::Scene* m_scene;
 
+
 private slots:
     void SelectMap();
     void AddNewUAV();

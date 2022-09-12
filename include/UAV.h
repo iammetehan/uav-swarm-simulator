@@ -8,6 +8,7 @@ class Item::UAV : public SimItem
 
 public:
     UAV(const QImage& image,
+        const QString& model,
         const QString& name,
         QGraphicsItem *parent = nullptr);
 
@@ -19,7 +20,7 @@ public:
 
 private:
     QImage m_image;
-
+    QString m_model;
 };
 
 #endif // UAV_H

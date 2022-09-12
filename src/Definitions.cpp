@@ -31,3 +31,8 @@ const QImage &Data::Map::Image() const
 {
     return m_image;
 }
+
+QRegularExpressionValidator *Data::IntegerRegularExp()
+{
+    return new QRegularExpressionValidator(QRegularExpression("[0-9]*"));
+}

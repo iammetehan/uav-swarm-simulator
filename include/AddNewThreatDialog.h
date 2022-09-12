@@ -2,6 +2,7 @@
 #define ADDNEWTHREATDIALOG_H
 
 #include <QDialog>
+#include "Definitions.h"
 
 namespace Ui {
 class AddNewThreatDialog;
@@ -14,6 +15,12 @@ class AddNewThreatDialog : public QDialog
 public:
     explicit AddNewThreatDialog(QWidget *parent = nullptr);
     ~AddNewThreatDialog();
+
+public:
+    const Item::Threat NewThreat();
+
+private slots:
+    void SelectColor();
 
 private:
     Ui::AddNewThreatDialog *ui;

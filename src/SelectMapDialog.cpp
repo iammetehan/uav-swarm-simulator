@@ -9,15 +9,13 @@ SelectMapDialog::SelectMapDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QRegularExpressionValidator* regExp =
-            new QRegularExpressionValidator(QRegularExpression("[0-9]*"));
-    ui->leWidth->setValidator(regExp);
-    ui->leHeight->setValidator(regExp);
-    ui->leAltitude->setValidator(regExp);
+    ui->leWidth->setValidator(Data::IntegerRegularExp());
+    ui->leHeight->setValidator(Data::IntegerRegularExp());
+    ui->leAltitude->setValidator(Data::IntegerRegularExp());
 
     connect(ui->selectImage, SIGNAL(clicked()), this, SLOT(SelectImage()));
     connect(ui->OK, SIGNAL(clicked()), this, SLOT(accept()));
-    connect(ui->Cancel, SIGNAL(clicked()), this, SLOT(reject()));
+    connect(ui->cancel, SIGNAL(clicked()), this, SLOT(reject()));
 }
 
 SelectMapDialog::~SelectMapDialog()

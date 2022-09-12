@@ -2,8 +2,11 @@
 #include <QPainter>
 
 
-Item::UAV::UAV(const QImage &image, const QString &name, QGraphicsItem *parent)
-    : SimItem(name, parent)
+Item::UAV::UAV(const QImage &image,
+               const QString &model,
+               const QString &name,
+               QGraphicsItem *parent)
+    : SimItem(name, parent), m_model(model)
 {
     m_image = image.scaled(Item::UAVImageSize(),
                            Qt::AspectRatioMode::KeepAspectRatio);
