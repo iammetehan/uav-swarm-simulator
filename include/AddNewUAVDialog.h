@@ -19,6 +19,9 @@ public:
 public:
     const Item::UAV NewUAV();
 
+private slots:
+    void SelectImage();
+
 private:
     Ui::AddNewUAVDialog *ui;
 };

@@ -4,7 +4,6 @@
 #include "Definitions.h"
 #include <QGraphicsItem>
 
-
 class Item::SimItem : public QGraphicsItem
 {
 public:

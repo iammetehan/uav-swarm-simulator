@@ -38,7 +38,11 @@ namespace Item
     class SimItem;
     class UAV;
     class Threat;
+
     constexpr QSize UAVImageSize() {return QSize(24, 24);};
+    constexpr uint8_t MinNumOfItem() {return 0;};
+    constexpr uint8_t MaxNumOfItem() {return 32;};
+
 }
 
 #endif // DEFINITIONS_H

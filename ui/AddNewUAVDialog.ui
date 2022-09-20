@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>627</width>
-    <height>139</height>
+    <width>446</width>
+    <height>128</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -52,20 +52,6 @@
        </item>
        <item>
         <widget class="QLineEdit" name="UAVModel"/>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
-         <item>
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Name :</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="UAVName"/>
-         </item>
-        </layout>
        </item>
       </layout>
      </item>

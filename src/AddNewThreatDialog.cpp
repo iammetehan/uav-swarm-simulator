@@ -28,7 +28,8 @@ AddNewThreatDialog::~AddNewThreatDialog()
 
 const Item::Threat AddNewThreatDialog::NewThreat()
 {
-    return Item::Threat(ui->width->text().toInt(),
+    return Item::Threat(ui->type->text(),
+                        ui->width->text().toInt(),
                         ui->height->text().toInt(),
                         ui->selectedColor->palette().color(QPalette::ColorRole::Button));
 }

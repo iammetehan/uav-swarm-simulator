@@ -1,6 +1,7 @@
 #include "ui_AddNewUAVDialog.h"
 #include "AddNewUAVDialog.h"
 #include "UAV.h"
+#include <QFileDialog>
 
 AddNewUAVDialog::AddNewUAVDialog(QWidget *parent) :
     QDialog(parent),
@@ -8,6 +9,7 @@ AddNewUAVDialog::AddNewUAVDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    connect(ui->selectImage, SIGNAL(clicked()), this, SLOT(SelectImage()));
     connect(ui->OK, SIGNAL(clicked()), this, SLOT(accept()));
     connect(ui->cancel, SIGNAL(clicked()), this, SLOT(reject()));
 }
@@ -17,9 +19,18 @@ AddNewUAVDialog::~AddNewUAVDialog()
     delete ui;
 }
 
+void AddNewUAVDialog::SelectImage()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    "Open File",
+                                                    "D:/",
+                                                    "Images (*.jpg *.png *.bmp )");
+    ui->selectedImage->setText(fileName);
+}
+
+
 const Item::UAV AddNewUAVDialog::NewUAV()
 {
-    return Item::UAV(QImage(ui->selectedImage->text()),
-                     ui->UAVModel->text(),
-                     ui->UAVName->text());
+    return Item::UAV(ui->UAVModel->text(),
+                     QImage(ui->selectedImage->text()));
 }

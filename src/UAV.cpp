@@ -2,11 +2,11 @@
 #include <QPainter>
 
 
-Item::UAV::UAV(const QImage &image,
-               const QString &model,
-               const QString &name,
+Item::UAV::UAV(const QString &model,
+               const QImage &image,
                QGraphicsItem *parent)
-    : SimItem(name, parent), m_model(model)
+    : SimItem(parent),
+      m_model(model)
 {
     m_image = image.scaled(Item::UAVImageSize(),
                            Qt::AspectRatioMode::KeepAspectRatio);
@@ -22,4 +22,14 @@ void Item::UAV::paint(QPainter *painter,
                       QWidget *widget)
 {
     painter->drawImage(m_image.rect(), m_image);
+}
+
+const QString &Item::UAV::Model() const
+{
+    return m_model;
+}
+
+const QImage &Item::UAV::Image() const
+{
+    return m_image;
 }

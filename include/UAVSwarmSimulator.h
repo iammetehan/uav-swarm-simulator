@@ -1,8 +1,11 @@
 #ifndef UAVSWARMSIMULATOR_H
 #define UAVSWARMSIMULATOR_H
 
-#include "Definitions.h"
 #include "Scene.h"
+#include "Definitions.h"
+#include "UAV.h"
+#include "Threat.h"
+
 #include <QMainWindow>
 #include <QGraphicsScene>
 
@@ -19,15 +22,31 @@ public:
     ~UAVSwarmSimulator();
 
 private:
-    Data::Map m_map;
-    Display::Scene* m_scene;
+    void AddDefSimItems();
+    void AddDefUAVModels();
+    void AddDefThreatTypes();
 
+private:
+    void AddUAVModel(Item::UAV* uavModel);
+    void AddThreatType(Item::Threat* threatType);
 
 private slots:
     void SelectMap();
     void AddNewUAV();
     void AddNewThreat();
     void ManageSwarm();
+
+private:
+    Data::Map m_map;
+    Display::Scene* m_scene;
+
+private:
+    QList<Item::UAV *> m_UAVModels;
+    QList<Item::Threat *> m_threadTypes;
+
+private:
+    QList<Item::UAV *> m_UAVs;
+    QList<Item::Threat *> m_threads;
 
 private:
     Ui::UAVSwarmSimulator *ui;

@@ -7,13 +7,18 @@ class Item::UAV : public SimItem
 {
 
 public:
-    UAV(const QImage& image,
-        const QString& model,
-        const QString& name,
+    UAV(const QString& model = QString(),
+        const QImage& image = QImage(),
         QGraphicsItem *parent = nullptr);
 
 public:
     QRectF boundingRect() const;
+
+public:
+    const QImage &Image() const;
+    const QString &Model() const;
+
+protected:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget);

@@ -21,12 +21,12 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>Name :</string>
+          <string>Type :</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="name"/>
+        <widget class="QLineEdit" name="type"/>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
