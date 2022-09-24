@@ -79,7 +79,7 @@ void UAVSwarmSimulator::AddNewUAV()
     AddNewUAVDialog addNewUAVDialog;
     if (QDialog::Accepted == addNewUAVDialog.exec())
     {
-
+        AddUAVModel(addNewUAVDialog.NewUAV());
     }
 }
 
@@ -88,16 +88,34 @@ void UAVSwarmSimulator::AddNewThreat()
     AddNewThreatDialog addNewThreatDialog;
     if (QDialog::Accepted == addNewThreatDialog.exec())
     {
-
+        AddThreatType(addNewThreatDialog.NewThreat());
     }
 }
 
 void UAVSwarmSimulator::ManageSwarm()
 {
+    using namespace Item;
+
     ManageSwarmDialog manageSwarmDialog(m_UAVModels, m_threadTypes);
     if (QDialog::Accepted == manageSwarmDialog.exec())
     {
+        m_UAVs = manageSwarmDialog.GetUAVs();
+        m_threats = manageSwarmDialog.GetThreats();
 
+        int a = 5;
+        for (UAV* uav: m_UAVs)
+        {
+            m_scene->addItem(uav);
+            uav->setPos(a, a);
+            a += 50;
+        }
+
+        for (Threat* threat: m_threats)
+        {
+            m_scene->addItem(threat);
+            threat->setPos(a, a);
+            a += 50;
+        }
     }
 }
 

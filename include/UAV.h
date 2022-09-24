@@ -12,7 +12,10 @@ public:
         QGraphicsItem *parent = nullptr);
 
 public:
-    QRectF boundingRect() const;
+    QRectF boundingRect() const override;
+
+public:
+    Item::SimItem *Clone(SimItem *simItem = nullptr) const override;
 
 public:
     const QImage &Image() const;
@@ -21,7 +24,7 @@ public:
 protected:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
-               QWidget *widget);
+               QWidget *widget) override;
 
 private:
     QImage m_image;

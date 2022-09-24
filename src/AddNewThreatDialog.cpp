@@ -26,9 +26,9 @@ AddNewThreatDialog::~AddNewThreatDialog()
     delete ui;
 }
 
-const Item::Threat AddNewThreatDialog::NewThreat()
+Item::Threat* AddNewThreatDialog::NewThreat()
 {
-    return Item::Threat(ui->type->text(),
+    return new Item::Threat(ui->type->text(),
                         ui->width->text().toInt(),
                         ui->height->text().toInt(),
                         ui->selectedColor->palette().color(QPalette::ColorRole::Button));

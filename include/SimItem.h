@@ -14,6 +14,10 @@ public:
 
 public:
     const QString &Name() const;
+    void SetName(const QString& name);
+
+protected:
+    virtual SimItem* Clone(SimItem* simItem = nullptr) const;
 
 private:
     QString m_name;

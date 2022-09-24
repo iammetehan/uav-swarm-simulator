@@ -46,7 +46,7 @@ private:
 
 private:
     QList<Item::UAV *> m_UAVs;
-    QList<Item::Threat *> m_threads;
+    QList<Item::Threat *> m_threats;
 
 private:
     Ui::UAVSwarmSimulator *ui;

@@ -22,8 +22,17 @@ QRectF Item::Threat::boundingRect() const
 
 void Item::Threat::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    painter->setOpacity(0.3);
     painter->setBrush(m_color);
     painter->drawEllipse(boundingRect());
+}
+
+Item::SimItem *Item::Threat::Clone(SimItem *simItem) const
+{
+    return SimItem::Clone(new Threat(Type(),
+                                     Width(),
+                                     Height(),
+                                     Color()));
 }
 
 const QColor &Item::Threat::Color() const

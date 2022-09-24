@@ -17,7 +17,7 @@ public:
     ~AddNewThreatDialog();
 
 public:
-    const Item::Threat NewThreat();
+    [[nodiscard]] Item::Threat* NewThreat();
 
 private slots:
     void SelectColor();

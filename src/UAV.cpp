@@ -17,6 +17,12 @@ QRectF Item::UAV::boundingRect() const
     return QRectF(m_image.rect());
 }
 
+Item::SimItem *Item::UAV::Clone(SimItem* simItem) const
+{
+    return SimItem::Clone(new UAV(Model(),
+                                  Image()));
+}
+
 void Item::UAV::paint(QPainter *painter,
                       const QStyleOptionGraphicsItem *option,
                       QWidget *widget)

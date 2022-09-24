@@ -17,7 +17,7 @@ public:
     ~AddNewUAVDialog();
 
 public:
-    const Item::UAV NewUAV();
+    [[nodiscard]] Item::UAV *NewUAV();
 
 private slots:
     void SelectImage();

@@ -29,8 +29,8 @@ void AddNewUAVDialog::SelectImage()
 }
 
 
-const Item::UAV AddNewUAVDialog::NewUAV()
+Item::UAV* AddNewUAVDialog::NewUAV()
 {
-    return Item::UAV(ui->UAVModel->text(),
+    return new Item::UAV(ui->UAVModel->text(),
                      QImage(ui->selectedImage->text()));
 }

@@ -23,7 +23,11 @@ private:
     void CreateSimItemWidgets();
     void CreateUAVModelWidgets();
     void CreateThreatTypeWidgets();
-    QWidget *GetItemWidget(const Item::SimItem *item);
+    QWidget *GetItemWidget(const QString &item);
+
+public:
+    QList<Item::UAV*> GetUAVs() const;
+    QList<Item::Threat*> GetThreats() const;
 
 private:
     const QList<Item::UAV *>& m_UAVModels;

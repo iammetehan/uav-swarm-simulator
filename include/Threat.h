@@ -14,8 +14,13 @@ public:
            QGraphicsItem *parent = nullptr);
 
 public:
-    QRectF boundingRect() const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    QRectF boundingRect() const override;
+    void paint(QPainter *painter,
+               const QStyleOptionGraphicsItem *option,
+               QWidget *widget) override;
+
+public:
+    Item::SimItem *Clone(SimItem *simItem = nullptr) const override;
 
 public:
     const QString &Type() const;
