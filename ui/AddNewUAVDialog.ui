@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>446</width>
-    <height>128</height>
+    <width>515</width>
+    <height>165</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,21 +21,30 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>Image :</string>
+          <string>Color :</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="selectedImage">
-         <property name="readOnly">
-          <bool>true</bool>
+        <widget class="QWidget" name="selectedColor" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>60</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>60</width>
+           <height>16777215</height>
+          </size>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="selectImage">
          <property name="text">
-          <string>Select Image</string>
+          <string>Select Color</string>
          </property>
         </widget>
        </item>
@@ -52,6 +61,38 @@
        </item>
        <item>
         <widget class="QLineEdit" name="UAVModel"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Speed :</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="speed"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Battery Duration :</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="batteryDuration"/>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>

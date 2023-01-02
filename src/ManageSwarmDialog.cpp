@@ -20,6 +20,7 @@ ManageSwarmDialog::ManageSwarmDialog(const QList<Item::UAV *> &UAVModels,
     connect(ui->cancel, SIGNAL(clicked()), this, SLOT(reject()));
 
     CreateSimItemWidgets();
+
 }
 
 ManageSwarmDialog::~ManageSwarmDialog()
@@ -76,14 +77,24 @@ QList<Item::UAV *> ManageSwarmDialog::GetUAVs() const
     for (const UAV* uav: m_UAVModels)
     {
         QSpinBox* sBox = ui->addUAVWidget->findChild<QSpinBox*>(uav->Model());
-
         if (nullptr != sBox)
         {
-            for (int i = 0; i < sBox->value(); i++)
-            {
-                UAVs.append(dynamic_cast<UAV *> (uav->Clone()));
-            }
+            UAVs.append(GetUAVInstances(uav, sBox->value()));
         }
+    }
+
+    return UAVs;
+}
+
+QList<Item::UAV *> ManageSwarmDialog::GetUAVInstances(const Item::UAV* uav,
+                                                      const int& numOfUAVs)
+{
+    using namespace Item;
+
+    QList<UAV *> UAVs;
+    for (int i = 0; i < numOfUAVs; i++)
+    {
+        UAVs.append(dynamic_cast<UAV *> (uav->Clone()));
     }
 
     return UAVs;
@@ -97,15 +108,26 @@ QList<Item::Threat *> ManageSwarmDialog::GetThreats() const
     for (const Threat* threat: m_threadTypes)
     {
         QSpinBox* sBox = ui->addThreatWidget->findChild<QSpinBox *>(threat->Type());
-
         if (nullptr != sBox)
         {
-            for (int i = 0; i < sBox->value(); i++)
-            {
-                threats.append(dynamic_cast<Threat *> (threat->Clone()));
-            }
+
+            threats.append(GetThreatInstances(threat, sBox->value()));
         }
     }
+
+    return threats;
+}
+
+QList<Item::Threat *> ManageSwarmDialog::GetThreatInstances(const Item::Threat* threat,
+                                                            const int& numOfThreads)
+{    using namespace Item;
+
+     QList<Threat *> threats;
+
+      for (int i = 0; i < numOfThreads; i++)
+      {
+          threats.append(dynamic_cast<Threat *> (threat->Clone()));
+      }
 
     return threats;
 }

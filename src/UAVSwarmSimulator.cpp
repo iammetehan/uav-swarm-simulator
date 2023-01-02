@@ -18,6 +18,7 @@ UAVSwarmSimulator::UAVSwarmSimulator(QWidget *parent)
     ui->view->setScene(m_scene);
 
     AddDefSimItems();
+    SetDefaultSwarm();
 
     connect(ui->selectMap, SIGNAL(clicked()), this, SLOT(SelectMap()));
     connect(ui->addNewUAV, SIGNAL(clicked()), this, SLOT(AddNewUAV()));
@@ -34,11 +35,17 @@ void UAVSwarmSimulator::AddDefSimItems()
 void UAVSwarmSimulator::AddDefUAVModels()
 {
     AddUAVModel(new Item::UAV(QString("DJI 1"),
-                          QImage("D:/images/DJI1.png")));
+                              QColor(Qt::red),
+                              10,
+                              20));
     AddUAVModel(new Item::UAV(QString("DJI 2"),
-                          QImage("D:/images/DJI2.png")));
+                              QColor(Qt::green),
+                              10,
+                              20));
     AddUAVModel(new Item::UAV(QString("DJI 3"),
-                          QImage("D:/images/DJI3.png")));
+                              QColor(Qt::blue),
+                              10,
+                              20));
 }
 
 void UAVSwarmSimulator::AddDefThreatTypes()
@@ -69,8 +76,55 @@ void UAVSwarmSimulator::SelectMap()
     SelectMapDialog selectMapDialog;
     if (QDialog::Accepted == selectMapDialog.exec())
     {
-        m_map = selectMapDialog.Map();
-        m_scene->addPixmap(QPixmap::fromImage(m_map.Image()));
+        SetCurrentMap(selectMapDialog.Map());
+    }
+}
+
+void UAVSwarmSimulator::SetCurrentMap(const Data::Map &map)
+{
+    m_map = map;
+    m_scene->addPixmap(QPixmap::fromImage(m_map.Image()));
+}
+
+void UAVSwarmSimulator::SetDefaultSwarm()
+{
+    using namespace Item;
+
+    SetCurrentMap(Data::Map(500,
+                            400,
+                            100,
+                            "D:/images/map1.PNG"));
+
+    for (const UAV* uav: m_UAVModels)
+    {
+        m_UAVs.append(ManageSwarmDialog::GetUAVInstances(uav, 3));
+    }
+
+    for (const Threat* threat: m_threadTypes)
+    {
+        m_threats.append(ManageSwarmDialog::GetThreatInstances(threat, 3));
+    }
+
+    SetDefaultPositions();
+}
+
+void UAVSwarmSimulator::SetDefaultPositions()
+{
+    using namespace Item;
+
+    int a = 5;
+    for (UAV* uav: m_UAVs)
+    {
+        m_scene->addItem(uav);
+        uav->setPos(a, a);
+        a += 50;
+    }
+
+    for (Threat* threat: m_threats)
+    {
+        m_scene->addItem(threat);
+        threat->setPos(a, a);
+        a += 50;
     }
 }
 
@@ -102,20 +156,7 @@ void UAVSwarmSimulator::ManageSwarm()
         m_UAVs = manageSwarmDialog.GetUAVs();
         m_threats = manageSwarmDialog.GetThreats();
 
-        int a = 5;
-        for (UAV* uav: m_UAVs)
-        {
-            m_scene->addItem(uav);
-            uav->setPos(a, a);
-            a += 50;
-        }
-
-        for (Threat* threat: m_threats)
-        {
-            m_scene->addItem(threat);
-            threat->setPos(a, a);
-            a += 50;
-        }
+        SetDefaultPositions();
     }
 }
 

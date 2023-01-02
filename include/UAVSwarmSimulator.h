@@ -21,6 +21,11 @@ public:
     UAVSwarmSimulator(QWidget *parent = nullptr);
     ~UAVSwarmSimulator();
 
+public:
+    void SetCurrentMap(const Data::Map& map);
+    void SetDefaultSwarm();
+    void SetDefaultPositions();
+
 private:
     void AddDefSimItems();
     void AddDefUAVModels();

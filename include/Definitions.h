@@ -39,7 +39,6 @@ namespace Item
     class UAV;
     class Threat;
 
-    constexpr QSize UAVImageSize() {return QSize(24, 24);};
     constexpr uint8_t MinNumOfItem() {return 1;};
     constexpr uint8_t MaxNumOfItem() {return 32;};
 

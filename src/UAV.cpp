@@ -3,39 +3,67 @@
 
 
 Item::UAV::UAV(const QString &model,
-               const QImage &image,
+               const QColor &color,
+               const uint &speed,
+               const uint &batteryDuration,
                QGraphicsItem *parent)
     : SimItem(parent),
-      m_model(model)
+      m_color(color),
+      m_model(model),
+      m_speed(speed),
+      m_batteryDuration(batteryDuration)
 {
-    m_image = image.scaled(Item::UAVImageSize(),
-                           Qt::AspectRatioMode::KeepAspectRatio);
+
 }
 
 QRectF Item::UAV::boundingRect() const
 {
-    return QRectF(m_image.rect());
+    qreal halfOfWidth = m_radius / 2;
+    qreal halfOfHeight = m_radius / 2;
+
+
+    return QRectF(-halfOfWidth,
+                  -halfOfHeight,
+                  halfOfWidth,
+                  halfOfHeight);
 }
 
 Item::SimItem *Item::UAV::Clone(SimItem* simItem) const
 {
     return SimItem::Clone(new UAV(Model(),
-                                  Image()));
+                                  Color(),
+                                  Speed(),
+                                  BatteryDuration()));
 }
 
 void Item::UAV::paint(QPainter *painter,
                       const QStyleOptionGraphicsItem *option,
                       QWidget *widget)
 {
-    painter->drawImage(m_image.rect(), m_image);
+
+    painter->setOpacity(0.8);
+    painter->setBrush(m_color);
+    painter->drawEllipse(boundingRect());
+
 }
+
 
 const QString &Item::UAV::Model() const
 {
     return m_model;
 }
 
-const QImage &Item::UAV::Image() const
+const QColor &Item::UAV::Color() const
 {
-    return m_image;
+    return m_color;
+}
+
+const uint &Item::UAV::Speed() const
+{
+    return m_speed;
+}
+
+const uint &Item::UAV::BatteryDuration() const
+{
+    return m_batteryDuration;
 }

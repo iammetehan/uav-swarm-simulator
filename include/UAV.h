@@ -8,7 +8,9 @@ class Item::UAV : public SimItem
 
 public:
     UAV(const QString& model = QString(),
-        const QImage& image = QImage(),
+        const QColor& m_color = QColor(Qt::black),
+        const uint& speed = 0,
+        const uint& batteryDuration = 0,
         QGraphicsItem *parent = nullptr);
 
 public:
@@ -18,8 +20,11 @@ public:
     Item::SimItem *Clone(SimItem *simItem = nullptr) const override;
 
 public:
-    const QImage &Image() const;
+    const QColor &Color() const;
     const QString &Model() const;
+
+    const uint& Speed() const;
+    const uint& BatteryDuration() const;
 
 protected:
     void paint(QPainter *painter,
@@ -27,8 +32,12 @@ protected:
                QWidget *widget) override;
 
 private:
-    QImage m_image;
+    QColor m_color;
     QString m_model;
+    uint m_speed;
+    uint m_batteryDuration;
+
+    const qreal m_radius = 24;
 };
 
 #endif // UAV_H

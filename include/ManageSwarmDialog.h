@@ -19,15 +19,22 @@ public:
                                QWidget *parent = nullptr);
     ~ManageSwarmDialog();
 
+public:
+    QList<Item::UAV*> GetUAVs() const;
+    QList<Item::Threat*> GetThreats() const;
+
+    // todo::iammetehan clone function can take a numOfItems as
+    // parameter and returns the instances
+    static QList<Item::UAV *> GetUAVInstances(const Item::UAV* uav,
+                                              const int& numOfUAVs);
+
+    static QList<Item::Threat *> GetThreatInstances(const Item::Threat* threat,
+                                                    const int& numOfThreads);
 private:
     void CreateSimItemWidgets();
     void CreateUAVModelWidgets();
     void CreateThreatTypeWidgets();
     QWidget *GetItemWidget(const QString &item);
-
-public:
-    QList<Item::UAV*> GetUAVs() const;
-    QList<Item::Threat*> GetThreats() const;
 
 private:
     const QList<Item::UAV *>& m_UAVModels;

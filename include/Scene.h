@@ -26,7 +26,6 @@ protected:
 
 private:
     Data::Map m_map;
-
 };
 
 #endif // SCENE_H

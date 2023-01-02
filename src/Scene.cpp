@@ -19,5 +19,6 @@ void Display::Scene::SetMap(const Data::Map &newMap)
 
 void Display::Scene::drawBackground(QPainter *painter, const QRectF &rect)
 {
+//    painter->setCompositionMode()
     painter->drawImage(m_map.Image().rect(), m_map.Image());
 }

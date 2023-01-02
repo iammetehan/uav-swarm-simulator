@@ -2,12 +2,16 @@
 #include "AddNewUAVDialog.h"
 #include "UAV.h"
 #include <QFileDialog>
+#include <QColorDialog>
 
 AddNewUAVDialog::AddNewUAVDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AddNewUAVDialog)
 {
     ui->setupUi(this);
+
+    ui->speed->setValidator(Data::IntegerRegularExp());
+    ui->batteryDuration->setValidator(Data::IntegerRegularExp());
 
     connect(ui->selectImage, SIGNAL(clicked()), this, SLOT(SelectImage()));
     connect(ui->OK, SIGNAL(clicked()), this, SLOT(accept()));
@@ -19,18 +23,16 @@ AddNewUAVDialog::~AddNewUAVDialog()
     delete ui;
 }
 
-void AddNewUAVDialog::SelectImage()
+void AddNewUAVDialog::SelectColor()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,
-                                                    "Open File",
-                                                    "D:/",
-                                                    "Images (*.jpg *.png *.bmp )");
-    ui->selectedImage->setText(fileName);
+    ui->selectedColor->setPalette(QPalette(QColorDialog::getColor()));
 }
 
 
 Item::UAV* AddNewUAVDialog::NewUAV()
 {
     return new Item::UAV(ui->UAVModel->text(),
-                     QImage(ui->selectedImage->text()));
+                         ui->selectedColor->palette().color(QPalette::ColorRole::Button),
+                         ui->speed->text().toInt(),
+                         ui->batteryDuration->text().toInt());
 }

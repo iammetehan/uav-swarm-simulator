@@ -17,14 +17,20 @@ Item::Threat::Threat(const QString &type,
 
 QRectF Item::Threat::boundingRect() const
 {
-    return QRectF(0, 0, m_width, m_height);
+    qreal halfOfWidth = m_width / 2;
+    qreal halfOfHeight = m_height / 2;
+
+    return QRectF(-halfOfWidth,
+                  -halfOfHeight,
+                  halfOfWidth,
+                  halfOfHeight);
 }
 
 void Item::Threat::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     painter->setOpacity(0.3);
     painter->setBrush(m_color);
-    painter->drawEllipse(boundingRect());
+    painter->drawRect(boundingRect());
 }
 
 Item::SimItem *Item::Threat::Clone(SimItem *simItem) const

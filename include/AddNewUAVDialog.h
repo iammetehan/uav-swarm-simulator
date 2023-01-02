@@ -20,7 +20,7 @@ public:
     [[nodiscard]] Item::UAV *NewUAV();
 
 private slots:
-    void SelectImage();
+    void SelectColor();
 
 private:
     Ui::AddNewUAVDialog *ui;
