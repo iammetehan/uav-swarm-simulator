@@ -14,6 +14,9 @@ class Display::Viewer : public QGraphicsView
     Q_OBJECT
 public:
     Viewer(QWidget* parent = nullptr);
+
+protected:
+    void wheelEvent(QWheelEvent *event);
 };
 
 #endif // VIEWER_H
