@@ -24,6 +24,9 @@ UAVSwarmSimulator::UAVSwarmSimulator(QWidget *parent)
     connect(ui->addNewUAV, SIGNAL(clicked()), this, SLOT(AddNewUAV()));
     connect(ui->addNewThreat, SIGNAL(clicked()), this, SLOT(AddNewThreat()));
     connect(ui->manageSwarm, SIGNAL(clicked()), this, SLOT(ManageSwarm()));
+    connect(ui->startSimulation, SIGNAL(clicked()), this, SLOT(StartSimulation()));
+    connect(ui->stopSimulation, SIGNAL(clicked()), this, SLOT(StopSimulation()));
+    connect(&timer, SIGNAL(timeout()), this, SLOT(DoStep()));
 }
 
 void UAVSwarmSimulator::AddDefSimItems()
@@ -71,29 +74,29 @@ void UAVSwarmSimulator::AddThreatType(Item::Threat* threatType)
     m_threadTypes.append(threatType);
 }
 
+void UAVSwarmSimulator::SetMap(const Data::Map &map)
+{
+    m_scene->SetMap(map);
+    m_scene->setSceneRect(map.Image().rect());
+}
+
 void UAVSwarmSimulator::SelectMap()
 {
     SelectMapDialog selectMapDialog;
     if (QDialog::Accepted == selectMapDialog.exec())
     {
-        SetCurrentMap(selectMapDialog.Map());
+        SetMap(selectMapDialog.Map());
     }
-}
-
-void UAVSwarmSimulator::SetCurrentMap(const Data::Map &map)
-{
-    m_map = map;
-    m_scene->addPixmap(QPixmap::fromImage(m_map.Image()));
 }
 
 void UAVSwarmSimulator::SetDefaultSwarm()
 {
     using namespace Item;
 
-    SetCurrentMap(Data::Map(500,
-                            400,
-                            100,
-                            "D:/images/map1.PNG"));
+    SetMap(Data::Map(500,
+                     400,
+                     100,
+                     "D:/images/map1.PNG"));
 
     for (const UAV* uav: m_UAVModels)
     {
@@ -158,6 +161,28 @@ void UAVSwarmSimulator::ManageSwarm()
 
         SetDefaultPositions();
     }
+}
+
+void UAVSwarmSimulator::StartSimulation()
+{
+    timer.start(timeOut);
+}
+
+void UAVSwarmSimulator::DoStep()
+{
+    using namespace Item;
+    qDebug() << "Updated";
+
+    for(UAV* uav: m_UAVs)
+    {
+        uav->Step();
+    }
+
+}
+
+void UAVSwarmSimulator::StopSimulation()
+{
+    timer.stop();
 }
 
 UAVSwarmSimulator::~UAVSwarmSimulator()

@@ -20,6 +20,9 @@ public:
     Item::SimItem *Clone(SimItem *simItem = nullptr) const override;
 
 public:
+    void Step() override;
+
+public:
     const QColor &Color() const;
     const QString &Model() const;
 
@@ -37,7 +40,12 @@ private:
     uint m_speed;
     uint m_batteryDuration;
 
-    const qreal m_radius = 24;
+private:
+    QVector<QPointF> path;
+
+
+private:
+    const qreal m_drawing_radius = 24;
 };
 
 #endif // UAV_H

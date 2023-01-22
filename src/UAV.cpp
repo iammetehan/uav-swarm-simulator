@@ -18,8 +18,8 @@ Item::UAV::UAV(const QString &model,
 
 QRectF Item::UAV::boundingRect() const
 {
-    qreal halfOfWidth = m_radius / 2;
-    qreal halfOfHeight = m_radius / 2;
+    qreal halfOfWidth = m_drawing_radius / 2;
+    qreal halfOfHeight = m_drawing_radius / 2;
 
 
     return QRectF(-halfOfWidth,
@@ -34,6 +34,12 @@ Item::SimItem *Item::UAV::Clone(SimItem* simItem) const
                                   Color(),
                                   Speed(),
                                   BatteryDuration()));
+}
+
+void Item::UAV::Step()
+{
+    setPos(pos().x() + 5,
+           pos().y() + 5);
 }
 
 void Item::UAV::paint(QPainter *painter,

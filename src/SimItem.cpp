@@ -37,3 +37,8 @@ void Item::SimItem::SetName(const QString &name)
 {
     m_name = name;
 }
+
+void Item::SimItem::Step()
+{
+    // meteaydn: make the function pure
+}

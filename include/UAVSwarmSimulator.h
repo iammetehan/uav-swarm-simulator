@@ -8,6 +8,8 @@
 
 #include <QMainWindow>
 #include <QGraphicsScene>
+#include <QTimer>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class UAVSwarmSimulator; }
@@ -22,7 +24,6 @@ public:
     ~UAVSwarmSimulator();
 
 public:
-    void SetCurrentMap(const Data::Map& map);
     void SetDefaultSwarm();
     void SetDefaultPositions();
 
@@ -35,14 +36,23 @@ private:
     void AddUAVModel(Item::UAV* uavModel);
     void AddThreatType(Item::Threat* threatType);
 
+private:
+    void SetMap(const Data::Map &map);
+
 private slots:
     void SelectMap();
     void AddNewUAV();
     void AddNewThreat();
     void ManageSwarm();
+    void StartSimulation();
+    void DoStep();
+    void StopSimulation();
 
 private:
-    Data::Map m_map;
+    QTimer timer;
+    const int timeOut = 100; // ms
+
+private:
     Display::Scene* m_scene;
 
 private:

@@ -20,16 +20,22 @@ namespace Data
             const QString imgPath);
 
     public:
+        static constexpr std::size_t NumOfPoints(){ return 15; }
+        static constexpr qreal PointRadius(){ return 5.0; }
+
+    public:
         std::size_t W() const;
         std::size_t H() const;
         std::size_t A() const;
         const QImage &Image() const;
+        const QVector<QPointF> &Points() const;
 
     private:
         std::size_t m_w;
         std::size_t m_h;
         std::size_t m_a;
         QImage m_image;
+        QVector<QPointF> points;
     };
 }
 

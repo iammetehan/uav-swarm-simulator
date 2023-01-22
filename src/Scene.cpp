@@ -19,6 +19,13 @@ void Display::Scene::SetMap(const Data::Map &newMap)
 
 void Display::Scene::drawBackground(QPainter *painter, const QRectF &rect)
 {
-//    painter->setCompositionMode()
+    using namespace Data;
+
     painter->drawImage(m_map.Image().rect(), m_map.Image());
+    painter->setBrush(Qt::blue);
+
+    for (const QPointF& point : m_map.Points())
+    {
+        painter->drawEllipse(point, Map::PointRadius(), Map::PointRadius());
+    }
 }
