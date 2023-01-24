@@ -29,10 +29,31 @@ public:
     const uint& Speed() const;
     const uint& BatteryDuration() const;
 
+    const QVector<QPointF> &GetPath() const;
+    void SetPath(const QVector<QPointF> &newPath);
+
 protected:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
+
+private:
+    QPointF NextPos();
+
+private:
+    const QPointF &NextPoint() const;
+
+private:
+    QPointF AddLengthToPoint(const qreal& length, const qreal &angle) const;
+    qreal AngleBtwPoints(const QPointF& p1, const QPointF& p2) const;
+    qreal LengthBtwPoints(const QPointF& p1, const QPointF& p2) const;
+
+private:
+    bool arrived = false;
+
+private:
+    qreal stepSize = 2; // px
+    int nextPointIndex = 0;
 
 private:
     QColor m_color;

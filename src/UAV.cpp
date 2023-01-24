@@ -24,8 +24,8 @@ QRectF Item::UAV::boundingRect() const
 
     return QRectF(-halfOfWidth,
                   -halfOfHeight,
-                  halfOfWidth,
-                  halfOfHeight);
+                  m_drawing_radius,
+                  m_drawing_radius);
 }
 
 Item::SimItem *Item::UAV::Clone(SimItem* simItem) const
@@ -38,21 +38,84 @@ Item::SimItem *Item::UAV::Clone(SimItem* simItem) const
 
 void Item::UAV::Step()
 {
-    setPos(pos().x() + 5,
-           pos().y() + 5);
+    if (!arrived)
+    {
+        setPos(NextPos());
+    }
 }
 
 void Item::UAV::paint(QPainter *painter,
                       const QStyleOptionGraphicsItem *option,
                       QWidget *widget)
 {
-
-    painter->setOpacity(0.8);
     painter->setBrush(m_color);
+    painter->setOpacity(0.8);
     painter->drawEllipse(boundingRect());
 
+    if (arrived)
+    {
+        painter->drawText(QPointF(0,0), "Arrived!");
+    }
 }
 
+QPointF Item::UAV::NextPos()
+{
+    QPointF nextPos = pos() + AddLengthToPoint(stepSize,
+                                               AngleBtwPoints(pos(), NextPoint()));
+    QRectF area(pos(), nextPos);
+
+    if (area.contains(NextPoint()))
+    {
+        if (NextPoint() == path.last())
+        {
+            arrived = true;
+            nextPos = path.last();
+        }
+        else
+        {
+            qreal nStepSize = stepSize - LengthBtwPoints(pos(), NextPoint());
+            QPointF currPoint = NextPoint();
+            nextPointIndex++;
+            nextPos = currPoint + AddLengthToPoint(nStepSize,
+                                                     AngleBtwPoints(currPoint, NextPoint()));
+        }
+    }
+
+    return nextPos;
+}
+
+const QPointF &Item::UAV::NextPoint() const
+{
+    return path.at(nextPointIndex);
+}
+
+QPointF Item::UAV::AddLengthToPoint(const qreal& length, const qreal& angle) const
+{
+    QLineF line(QPointF(0,0), QPointF(1,1));
+    line.setLength(length);
+    line.setAngle(angle);
+    return line.p2();
+}
+
+qreal Item::UAV::AngleBtwPoints(const QPointF &p1, const QPointF &p2) const
+{
+    return QLineF(p1, p2).angle();
+}
+
+qreal Item::UAV::LengthBtwPoints(const QPointF &p1, const QPointF &p2) const
+{
+    return QLineF(p1, p2).length();
+}
+
+const QVector<QPointF> &Item::UAV::GetPath() const
+{
+    return path;
+}
+
+void Item::UAV::SetPath(const QVector<QPointF> &newPath)
+{
+    path = newPath;
+}
 
 const QString &Item::UAV::Model() const
 {

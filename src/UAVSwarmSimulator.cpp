@@ -103,6 +103,18 @@ void UAVSwarmSimulator::SetDefaultSwarm()
         m_UAVs.append(ManageSwarmDialog::GetUAVInstances(uav, 3));
     }
 
+    for (UAV* uav: m_UAVs)
+    {
+        int numOfPoints = rand() % 10;
+        QVector<QPointF> path;
+        for (int i = 0; i < numOfPoints; i++)
+        {
+            path.append(m_scene->Map().Points().at(rand() % m_scene->Map().Points().size()));
+        }
+        uav->SetPath(path);
+
+    }
+
     for (const Threat* threat: m_threadTypes)
     {
         m_threats.append(ManageSwarmDialog::GetThreatInstances(threat, 3));

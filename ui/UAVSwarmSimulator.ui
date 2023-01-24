@@ -50,6 +50,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="manageMission">
+          <property name="text">
+           <string>Manage Mission</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="addNewUAV">
           <property name="text">
            <string>Add New UAV </string>
