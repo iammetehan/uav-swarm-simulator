@@ -8,6 +8,7 @@
 
 #include <QDebug>
 
+
 UAVSwarmSimulator::UAVSwarmSimulator(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::UAVSwarmSimulator)
@@ -27,6 +28,16 @@ UAVSwarmSimulator::UAVSwarmSimulator(QWidget *parent)
     connect(ui->startSimulation, SIGNAL(clicked()), this, SLOT(StartSimulation()));
     connect(ui->stopSimulation, SIGNAL(clicked()), this, SLOT(StopSimulation()));
     connect(&timer, SIGNAL(timeout()), this, SLOT(DoStep()));
+
+
+    connect(ui->findPaths, SIGNAL(clicked()), this, SLOT(FindPaths()));
+
+    listen = new QUdpSocket(this);
+    listen->bind(QHostAddress::LocalHost, 7755);
+
+    connect(listen, &QUdpSocket::readyRead,
+            this, &UAVSwarmSimulator::ReadPaths);
+
 }
 
 void UAVSwarmSimulator::AddDefSimItems()
@@ -54,13 +65,13 @@ void UAVSwarmSimulator::AddDefUAVModels()
 void UAVSwarmSimulator::AddDefThreatTypes()
 {
     AddThreatType(new Item::Threat(QString("Terrorist Group"),
-                                   50.0,
-                                   70.0,
+                                   200,
+                                   250,
                                    QColor(Qt::red)));
 
     AddThreatType(new Item::Threat(QString("Air Defense Missiles"),
-                                   100.0,
-                                   120.0,
+                                   270,
+                                   320,
                                    QColor(Qt::blue)));
 }
 
@@ -196,6 +207,59 @@ void UAVSwarmSimulator::StopSimulation()
 {
     timer.stop();
 }
+
+void UAVSwarmSimulator::FindPaths()
+{
+    QByteArray mapPointData;
+    QDataStream mapPointDataStream(&mapPointData, QIODevice::WriteOnly);
+    mapPointDataStream << m_scene->Map().Points().size() * 2;
+
+    for (const QPointF& p: m_scene->Map().Points())
+    {
+        mapPointDataStream << p.x();
+        mapPointDataStream << p.y();
+    }
+
+    QUdpSocket mapSocket;
+    mapSocket.writeDatagram(mapPointData.data(), mapPointData.size(), QHostAddress::LocalHost, 4651);
+
+    QByteArray threatPointData;
+    QDataStream threatPointDataStream(&threatPointData, QIODevice::WriteOnly);
+    threatPointDataStream << m_threats.size();
+
+    for (Item::Threat* threat: m_threats)
+    {
+        threatPointDataStream << threat->sceneBoundingRect().topLeft().x();
+        threatPointDataStream << threat->sceneBoundingRect().topLeft().y();
+
+        threatPointDataStream << threat->sceneBoundingRect().topRight().x();
+        threatPointDataStream << threat->sceneBoundingRect().topRight().y();
+
+        threatPointDataStream << threat->sceneBoundingRect().bottomRight().x();
+        threatPointDataStream << threat->sceneBoundingRect().bottomRight().y();
+
+        threatPointDataStream << threat->sceneBoundingRect().bottomLeft().x();
+        threatPointDataStream << threat->sceneBoundingRect().bottomLeft().y();
+    }
+
+
+    QUdpSocket threatSocket;
+    threatSocket.writeDatagram(threatPointData.data(), threatPointData.size(), QHostAddress::LocalHost, 4652);
+}
+
+
+void UAVSwarmSimulator::ReadPaths()
+{
+    QByteArray datagram;
+    while (listen->hasPendingDatagrams())
+    {
+        datagram.resize(listen->pendingDatagramSize());
+        listen->readDatagram(datagram.data(),datagram.size());
+    }
+
+    qDebug() << datagram;
+}
+
 
 UAVSwarmSimulator::~UAVSwarmSimulator()
 {

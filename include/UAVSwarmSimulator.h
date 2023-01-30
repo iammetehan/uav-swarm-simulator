@@ -9,6 +9,7 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QTimer>
+#include <QUdpSocket>
 
 
 QT_BEGIN_NAMESPACE
@@ -47,6 +48,9 @@ private slots:
     void StartSimulation();
     void DoStep();
     void StopSimulation();
+    void FindPaths();
+    void ReadPaths();
+
 
 private:
     QTimer timer;
@@ -62,6 +66,9 @@ private:
 private:
     QList<Item::UAV *> m_UAVs;
     QList<Item::Threat *> m_threats;
+
+private:
+    QUdpSocket* listen;
 
 private:
     Ui::UAVSwarmSimulator *ui;

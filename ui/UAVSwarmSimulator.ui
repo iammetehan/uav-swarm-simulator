@@ -110,6 +110,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="findPaths">
+        <property name="text">
+         <string>Find Paths</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="stopSimulation">
         <property name="text">
          <string>Stop Simulation</string>
