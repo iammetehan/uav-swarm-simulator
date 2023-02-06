@@ -11,12 +11,12 @@ Data::Map::Map(const std::size_t w, const std::size_t h,
 {
     m_image = QImage(imgPath);
 
-    qreal widthOffset = m_image.width() / static_cast<double>(NumOfPoints());
-    qreal heightOffset = m_image.height() / static_cast<double>(NumOfPoints());
+    qreal widthOffset = m_image.width() / static_cast<double>(WNumOfPoints() - 1);
+    qreal heightOffset = m_image.height() / static_cast<double>(HNumOfPoints() - 1);
 
-    for (int i = 0; i <= NumOfPoints(); i++)
+    for (int i = 0; i < WNumOfPoints(); i++)
     {
-        for (int k = 0; k <= NumOfPoints(); k++)
+        for (int k = 0; k < HNumOfPoints(); k++)
         {
             points.append(QPointF(i * widthOffset,
                                   k * heightOffset));

@@ -29,6 +29,14 @@ public:
     void SetDefaultPositions();
 
 private:
+    void SendMapPointData() const;
+    void SendThreatData() const;
+    void SendSrcDstData(const QPointF &src, const QPointF &dst) const;
+    void SendFindPathMsg() const;
+    void FindPath(const QPointF& src, const QPointF& dst) const;
+
+
+private:
     void AddDefSimItems();
     void AddDefUAVModels();
     void AddDefThreatTypes();
@@ -48,6 +56,7 @@ private slots:
     void StartSimulation();
     void DoStep();
     void StopSimulation();
+    void UpdateServer();
     void FindPaths();
     void ReadPaths();
 

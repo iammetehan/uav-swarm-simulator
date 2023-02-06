@@ -1,4 +1,6 @@
 #include "Viewer.h"
+#include "Definitions.h"
+
 #include <QWheelEvent>
 
 Display::Viewer::Viewer(QWidget *parent)
@@ -25,6 +27,8 @@ void Display::Viewer::wheelEvent(QWheelEvent *event)
         }
 
         scale(factor, factor);
+        scene()->invalidate(Item::SceneRect());
+
     }
     else
     {

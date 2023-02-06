@@ -15,6 +15,7 @@ public:
 
 public:
     QRectF boundingRect() const override;
+    QPainterPath shape() const override;
 
 public:
     Item::SimItem *Clone(SimItem *simItem = nullptr) const override;
@@ -29,13 +30,21 @@ public:
     const uint& Speed() const;
     const uint& BatteryDuration() const;
 
-    const QVector<QPointF> &GetPath() const;
-    void SetPath(const QVector<QPointF> &newPath);
+    const QVector<QVector<QPointF>> &GetPaths() const;
+    void SetPaths(const QVector<QVector<QPointF>> &newPaths);
+
+    const QVector<QPointF> &CurrentPath() const;
+
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 protected:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
+
+private:
+    QRectF ItemBRect() const;
+    QPainterPath Lines() const;
 
 private:
     QPointF NextPos();
@@ -62,8 +71,10 @@ private:
     uint m_batteryDuration;
 
 private:
-    QVector<QPointF> path;
-
+    bool showCurrentPath = false;
+    std::size_t currentPathIndex = 0;
+    QVector<QPointF> defaultPath;
+    QVector<QVector<QPointF>> paths;
 
 private:
     const qreal m_drawing_radius = 24;

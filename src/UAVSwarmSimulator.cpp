@@ -28,12 +28,11 @@ UAVSwarmSimulator::UAVSwarmSimulator(QWidget *parent)
     connect(ui->startSimulation, SIGNAL(clicked()), this, SLOT(StartSimulation()));
     connect(ui->stopSimulation, SIGNAL(clicked()), this, SLOT(StopSimulation()));
     connect(&timer, SIGNAL(timeout()), this, SLOT(DoStep()));
-
-
+    connect(ui->updateServer, SIGNAL(clicked()), this, SLOT(UpdateServer()));
     connect(ui->findPaths, SIGNAL(clicked()), this, SLOT(FindPaths()));
 
     listen = new QUdpSocket(this);
-    listen->bind(QHostAddress::LocalHost, 7755);
+    listen->bind(QHostAddress::LocalHost, 4655);
 
     connect(listen, &QUdpSocket::readyRead,
             this, &UAVSwarmSimulator::ReadPaths);
@@ -122,7 +121,11 @@ void UAVSwarmSimulator::SetDefaultSwarm()
         {
             path.append(m_scene->Map().Points().at(rand() % m_scene->Map().Points().size()));
         }
-        uav->SetPath(path);
+        QVector<QVector<QPointF>> asd;
+        asd.append(path);
+        asd.append(path);
+
+        uav->SetPaths(asd);
 
     }
 
@@ -208,7 +211,24 @@ void UAVSwarmSimulator::StopSimulation()
     timer.stop();
 }
 
+void UAVSwarmSimulator::UpdateServer()
+{
+    SendMapPointData();
+    SendThreatData();
+}
+
 void UAVSwarmSimulator::FindPaths()
+{
+    FindPath(m_UAVs[2]->pos(), QPointF(700, 700));
+}
+
+void UAVSwarmSimulator::FindPath(const QPointF& src, const QPointF& dst) const
+{
+    SendSrcDstData(m_UAVs[2]->pos(), QPointF(700, 700));
+    SendFindPathMsg();
+}
+
+void UAVSwarmSimulator::SendMapPointData() const
 {
     QByteArray mapPointData;
     QDataStream mapPointDataStream(&mapPointData, QIODevice::WriteOnly);
@@ -222,7 +242,10 @@ void UAVSwarmSimulator::FindPaths()
 
     QUdpSocket mapSocket;
     mapSocket.writeDatagram(mapPointData.data(), mapPointData.size(), QHostAddress::LocalHost, 4651);
+}
 
+void UAVSwarmSimulator::SendThreatData() const
+{
     QByteArray threatPointData;
     QDataStream threatPointDataStream(&threatPointData, QIODevice::WriteOnly);
     threatPointDataStream << m_threats.size();
@@ -242,11 +265,33 @@ void UAVSwarmSimulator::FindPaths()
         threatPointDataStream << threat->sceneBoundingRect().bottomLeft().y();
     }
 
-
     QUdpSocket threatSocket;
     threatSocket.writeDatagram(threatPointData.data(), threatPointData.size(), QHostAddress::LocalHost, 4652);
+
 }
 
+void UAVSwarmSimulator::SendSrcDstData(const QPointF &src, const QPointF &dst) const
+{
+    QByteArray srcDstData;
+    QDataStream srcDstDataStream(&srcDstData, QIODevice::WriteOnly);
+
+    srcDstDataStream << src.x();
+    srcDstDataStream << src.y();
+
+    srcDstDataStream << dst.x();
+    srcDstDataStream << dst.y();
+
+    QUdpSocket srcDstSocket;
+    srcDstSocket.writeDatagram(srcDstData.data(), srcDstData.size(), QHostAddress::LocalHost, 4653);
+}
+
+void UAVSwarmSimulator::SendFindPathMsg() const
+{
+    QByteArray findPathData("FindPath");
+
+    QUdpSocket findPatSocket;
+    findPatSocket.writeDatagram(findPathData.data(), findPathData.size(), QHostAddress::LocalHost, 4654);
+}
 
 void UAVSwarmSimulator::ReadPaths()
 {
@@ -256,10 +301,31 @@ void UAVSwarmSimulator::ReadPaths()
         datagram.resize(listen->pendingDatagramSize());
         listen->readDatagram(datagram.data(),datagram.size());
     }
+    qDebug() << datagram.size();
 
-    qDebug() << datagram;
+    QVector<bool> boolData;
+    for(int i = 0; i < datagram.size();i++)
+    {
+        boolData.append(datagram.at(i));
+    }
+
+    const int numberOfPaths = boolData.size() / (Data::Map::TotalNumOfPoints());
+
+    QVector<QVector<bool>> boolPaths;
+    for(int i = 0; i < numberOfPaths; i++)
+    {
+        QVector<bool> boolPath;
+        for (int k = 0; k < Data::Map::TotalNumOfPoints(); k++)
+        {
+            const int index = (i * Data::Map::TotalNumOfPoints()) + k;
+            boolPath.append(boolData.at(index));
+        }
+        boolPaths.append(boolPath);
+    }
+
+    qDebug() << boolPaths.size();
+    qDebug() << boolPaths;
 }
-
 
 UAVSwarmSimulator::~UAVSwarmSimulator()
 {

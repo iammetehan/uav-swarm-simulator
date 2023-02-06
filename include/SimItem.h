@@ -16,6 +16,8 @@ public:
     const QString &Name() const;
     void SetName(const QString& name);
 
+
+
 public:
     virtual void Step();
 
@@ -24,6 +26,11 @@ protected:
 
 private:
     QString m_name;
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 };
 
 #endif // SIMITEM_H

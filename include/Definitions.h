@@ -20,7 +20,9 @@ namespace Data
             const QString imgPath);
 
     public:
-        static constexpr std::size_t NumOfPoints(){ return 15; }
+        static constexpr std::size_t TotalNumOfPoints(){ return HNumOfPoints() * WNumOfPoints(); }
+        static constexpr std::size_t HNumOfPoints(){ return 10; }
+        static constexpr std::size_t WNumOfPoints(){ return 16; }
         static constexpr qreal PointRadius(){ return 5.0; }
 
     public:
@@ -45,6 +47,8 @@ namespace Item
     class UAV;
     class Threat;
 
+    constexpr QRectF SceneRect() {return QRectF(QPointF(-5000, -5000),
+                                                QPointF(5000, 5000));};
     constexpr uint8_t MinNumOfItem() {return 1;};
     constexpr uint8_t MaxNumOfItem() {return 32;};
 

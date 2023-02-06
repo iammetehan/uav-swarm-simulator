@@ -1,5 +1,9 @@
 #include "UAV.h"
 #include <QPainter>
+#include <QMenu>
+#include <QGraphicsSceneContextMenuEvent>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 
 
 Item::UAV::UAV(const QString &model,
@@ -18,14 +22,20 @@ Item::UAV::UAV(const QString &model,
 
 QRectF Item::UAV::boundingRect() const
 {
-    qreal halfOfWidth = m_drawing_radius / 2;
-    qreal halfOfHeight = m_drawing_radius / 2;
+    if (showCurrentPath)
+    {
+        return ItemBRect().united(Lines().boundingRect());
+    }
 
+    return ItemBRect();
+}
 
-    return QRectF(-halfOfWidth,
-                  -halfOfHeight,
-                  m_drawing_radius,
-                  m_drawing_radius);
+QPainterPath Item::UAV::shape() const
+{
+    QPainterPath path;
+    path.addRect(ItemBRect());
+
+    return path;
 }
 
 Item::SimItem *Item::UAV::Clone(SimItem* simItem) const
@@ -50,12 +60,48 @@ void Item::UAV::paint(QPainter *painter,
 {
     painter->setBrush(m_color);
     painter->setOpacity(0.8);
-    painter->drawEllipse(boundingRect());
+    painter->drawEllipse(ItemBRect());
 
     if (arrived)
     {
         painter->drawText(QPointF(0,0), "Arrived!");
     }
+
+    if (showCurrentPath)
+    {
+        QPen pen;
+        pen.setBrush(m_color);
+        pen.setWidth(3);
+
+        painter->setPen(pen);
+        painter->setBrush(Qt::transparent);
+
+        painter->drawPath(Lines());
+    }
+}
+
+QRectF Item::UAV::ItemBRect() const
+{
+    qreal halfOfWidth = m_drawing_radius / 2;
+    qreal halfOfHeight = m_drawing_radius / 2;
+
+
+    return QRectF(-halfOfWidth,
+                  -halfOfHeight,
+                  m_drawing_radius,
+                  m_drawing_radius);
+}
+
+QPainterPath Item::UAV::Lines() const
+{
+    QPainterPath lines;
+    lines.moveTo(QPointF(0, 0));
+    for(const QPointF& p: CurrentPath())
+    {
+        lines.lineTo(mapFromScene(p));
+    }
+
+    return lines;
 }
 
 QPointF Item::UAV::NextPos()
@@ -66,10 +112,10 @@ QPointF Item::UAV::NextPos()
 
     if (area.contains(NextPoint()))
     {
-        if (NextPoint() == path.last())
+        if (NextPoint() == CurrentPath().last())
         {
             arrived = true;
-            nextPos = path.last();
+            nextPos = CurrentPath().last();
         }
         else
         {
@@ -86,7 +132,7 @@ QPointF Item::UAV::NextPos()
 
 const QPointF &Item::UAV::NextPoint() const
 {
-    return path.at(nextPointIndex);
+    return CurrentPath().at(nextPointIndex);
 }
 
 QPointF Item::UAV::AddLengthToPoint(const qreal& length, const qreal& angle) const
@@ -107,14 +153,23 @@ qreal Item::UAV::LengthBtwPoints(const QPointF &p1, const QPointF &p2) const
     return QLineF(p1, p2).length();
 }
 
-const QVector<QPointF> &Item::UAV::GetPath() const
+const QVector<QVector<QPointF> > &Item::UAV::GetPaths() const
 {
-    return path;
+    return paths;
 }
 
-void Item::UAV::SetPath(const QVector<QPointF> &newPath)
+void Item::UAV::SetPaths(const QVector<QVector<QPointF>> &newPaths)
 {
-    path = newPath;
+    paths = newPaths;
+}
+
+const QVector<QPointF> &Item::UAV::CurrentPath() const
+{
+    if (currentPathIndex < paths.size())
+    {
+        return paths.at(currentPathIndex);
+    }
+    return defaultPath;
 }
 
 const QString &Item::UAV::Model() const
@@ -135,4 +190,70 @@ const uint &Item::UAV::Speed() const
 const uint &Item::UAV::BatteryDuration() const
 {
     return m_batteryDuration;
+}
+
+void Item::UAV::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    QVector<QAction*> actions;
+    QMenu menu;
+
+    for(int i = 0; i < paths.size(); i++)
+    {
+        QAction *action = new QAction("Path " + QString::number(i + 1));
+        action->setCheckable(true);
+
+        actions.append(action);
+        menu.addAction(action);
+
+        if (currentPathIndex == i)
+        {
+            action->setChecked(Qt::Checked);
+        }
+        else
+        {
+            action->setChecked(Qt::Unchecked);
+        }
+    }
+
+    QAction *showCurrPath = new QAction("Show Current Path");
+    showCurrPath->setCheckable(true);
+    menu.addAction(showCurrPath);
+
+    if (showCurrentPath)
+    {
+        showCurrPath->setChecked(Qt::Checked);
+    }
+    else
+    {
+        showCurrPath->setChecked(Qt::Unchecked);
+    }
+
+    QAction *a = menu.exec(event->screenPos());
+
+    if (nullptr != a)
+    {
+        if (showCurrPath == a)
+        {
+            if (showCurrentPath)
+            {
+                showCurrentPath = false;
+            }
+            else
+            {
+                showCurrentPath = true;
+            }
+        }
+        else
+        {
+            currentPathIndex = actions.indexOf(a);
+            qDebug() << "Selected path :" << a->text();
+        }
+        scene()->invalidate(Item::SceneRect());
+    }
+
+    for(QAction* action: actions)
+    {
+        delete action;
+    }
+    delete showCurrPath;
 }

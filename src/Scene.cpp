@@ -4,7 +4,7 @@
 Display::Scene::Scene(QObject *parent)
     : QGraphicsScene{parent}
 {
-
+    setSceneRect(Item::SceneRect());
 }
 
 const Data::Map &Display::Scene::Map() const

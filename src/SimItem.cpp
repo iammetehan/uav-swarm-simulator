@@ -1,4 +1,5 @@
 #include "SimItem.h"
+#include <QGraphicsScene>
 
 Item::SimItem::SimItem(QGraphicsItem *parent)
     : QGraphicsItem(parent)
@@ -26,6 +27,24 @@ Item::SimItem *Item::SimItem::Clone(SimItem *simItem) const
         return simItem;
     }
     return nullptr;
+}
+
+void Item::SimItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsItem::mouseMoveEvent(event);
+    scene()->invalidate(Item::SceneRect());
+}
+
+void Item::SimItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsItem::mouseReleaseEvent(event);
+    scene()->invalidate(Item::SceneRect());
+}
+
+void Item::SimItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsItem::mousePressEvent(event);
+    scene()->invalidate(Item::SceneRect());
 }
 
 const QString &Item::SimItem::Name() const
