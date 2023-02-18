@@ -6,7 +6,9 @@
 #include "AddNewThreatDialog.h"
 #include "ManageSwarmDialog.h"
 
+#include <iterator>
 #include <QDebug>
+#include <QThread>
 
 
 UAVSwarmSimulator::UAVSwarmSimulator(QWidget *parent)
@@ -36,6 +38,9 @@ UAVSwarmSimulator::UAVSwarmSimulator(QWidget *parent)
 
     connect(listen, &QUdpSocket::readyRead,
             this, &UAVSwarmSimulator::ReadPaths);
+
+    connect(this, &UAVSwarmSimulator::UAVProcessed,
+            this, &UAVSwarmSimulator::FindPaths);
 
 }
 
@@ -110,7 +115,7 @@ void UAVSwarmSimulator::SetDefaultSwarm()
 
     for (const UAV* uav: m_UAVModels)
     {
-        m_UAVs.append(ManageSwarmDialog::GetUAVInstances(uav, 3));
+        m_UAVs.append(ManageSwarmDialog::GetUAVInstances(uav, 1));
     }
 
     for (UAV* uav: m_UAVs)
@@ -121,12 +126,7 @@ void UAVSwarmSimulator::SetDefaultSwarm()
         {
             path.append(m_scene->Map().Points().at(rand() % m_scene->Map().Points().size()));
         }
-        QVector<QVector<QPointF>> asd;
-        asd.append(path);
-        asd.append(path);
-
-        uav->SetPaths(asd);
-
+        uav->SetDestination(QPointF(700, 700));
     }
 
     for (const Threat* threat: m_threadTypes)
@@ -191,6 +191,13 @@ void UAVSwarmSimulator::ManageSwarm()
 
 void UAVSwarmSimulator::StartSimulation()
 {
+    using namespace Item;
+
+    for(UAV* uav: m_UAVs)
+    {
+        uav->BeforeSimulation();
+    }
+
     timer.start(timeOut);
 }
 
@@ -204,11 +211,19 @@ void UAVSwarmSimulator::DoStep()
         uav->Step();
     }
 
+    m_scene->invalidate(Item::SceneRect());
 }
 
 void UAVSwarmSimulator::StopSimulation()
 {
+    using namespace Item;
+
     timer.stop();
+
+    for(UAV* uav: m_UAVs)
+    {
+        uav->AfterSimulation();
+    }
 }
 
 void UAVSwarmSimulator::UpdateServer()
@@ -219,13 +234,52 @@ void UAVSwarmSimulator::UpdateServer()
 
 void UAVSwarmSimulator::FindPaths()
 {
-    FindPath(m_UAVs[2]->pos(), QPointF(700, 700));
+    using namespace Item;
+
+    qDebug() << "1";
+
+    if (nullptr == m_currProcessedUAV)
+    {
+        qDebug() << "2";
+        m_currProcessedUAV = m_UAVs.first();
+    }
+    else
+    {
+        if (m_currProcessedUAV == m_UAVs.last())
+        {
+            qDebug() << "3";
+            m_currProcessedUAV = nullptr;
+            return;
+        }
+        else
+        {
+            qDebug() << "4";
+            int index = m_UAVs.indexOf(m_currProcessedUAV) + 1;
+            m_currProcessedUAV = m_UAVs.at(index);
+        }
+    }
+
+    FindPath(m_currProcessedUAV->Source(),
+             m_currProcessedUAV->Destination());
 }
 
 void UAVSwarmSimulator::FindPath(const QPointF& src, const QPointF& dst) const
 {
-    SendSrcDstData(m_UAVs[2]->pos(), QPointF(700, 700));
+    SendSrcDstData(src, dst);
     SendFindPathMsg();
+}
+
+QList<int> UAVSwarmSimulator::ConvertToIntPaths(const QList<bool> boolPaths) const
+{
+    QList<int> intPaths;
+    for (int i = 0; i < boolPaths.size(); i++)
+    {
+        if (boolPaths.at(i))
+        {
+            intPaths.append(i);
+        }
+    }
+    return intPaths;
 }
 
 void UAVSwarmSimulator::SendMapPointData() const
@@ -281,13 +335,19 @@ void UAVSwarmSimulator::SendSrcDstData(const QPointF &src, const QPointF &dst) c
     srcDstDataStream << dst.x();
     srcDstDataStream << dst.y();
 
+    qDebug() << srcDstData.size();
+
     QUdpSocket srcDstSocket;
     srcDstSocket.writeDatagram(srcDstData.data(), srcDstData.size(), QHostAddress::LocalHost, 4653);
 }
 
 void UAVSwarmSimulator::SendFindPathMsg() const
 {
+    qDebug() << "SendFindPathMsg";
+
     QByteArray findPathData("FindPath");
+
+    qDebug() << findPathData.size();
 
     QUdpSocket findPatSocket;
     findPatSocket.writeDatagram(findPathData.data(), findPathData.size(), QHostAddress::LocalHost, 4654);
@@ -323,8 +383,14 @@ void UAVSwarmSimulator::ReadPaths()
         boolPaths.append(boolPath);
     }
 
-    qDebug() << boolPaths.size();
-    qDebug() << boolPaths;
+    QVector<QVector<int>> intPaths;
+    for(const QVector<bool>& points: boolPaths)
+    {
+        intPaths.append(ConvertToIntPaths(points));
+    }
+
+    m_currProcessedUAV->SetPaths(m_scene->Map().IndexesToPaths(intPaths));
+    emit UAVProcessed();
 }
 
 UAVSwarmSimulator::~UAVSwarmSimulator()

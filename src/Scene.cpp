@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "Definitions.h"
+#include <UAV.h>
 
 Display::Scene::Scene(QObject *parent)
     : QGraphicsScene{parent}
@@ -20,6 +21,7 @@ void Display::Scene::SetMap(const Data::Map &newMap)
 void Display::Scene::drawBackground(QPainter *painter, const QRectF &rect)
 {
     using namespace Data;
+    using namespace Item;
 
     painter->drawImage(m_map.Image().rect(), m_map.Image());
     painter->setBrush(Qt::blue);
@@ -28,4 +30,25 @@ void Display::Scene::drawBackground(QPainter *painter, const QRectF &rect)
     {
         painter->drawEllipse(point, Map::PointRadius(), Map::PointRadius());
     }
+
+    for(QGraphicsItem* item: items())
+    {
+        UAV* uav = dynamic_cast<UAV*>(item);
+
+        if (nullptr != uav)
+        {
+            if (uav->ShowCurrentPath())
+            {
+                QPen pen;
+                pen.setBrush(uav->Color());
+                pen.setWidth(3);
+
+                painter->setPen(pen);
+                painter->setBrush(Qt::transparent);
+
+                painter->drawPath(uav->Lines());
+            }
+        }
+    }
+
 }

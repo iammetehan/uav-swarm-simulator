@@ -34,7 +34,7 @@ private:
     void SendSrcDstData(const QPointF &src, const QPointF &dst) const;
     void SendFindPathMsg() const;
     void FindPath(const QPointF& src, const QPointF& dst) const;
-
+    QList<int> ConvertToIntPaths(const QList<bool> boolPoints) const;
 
 private:
     void AddDefSimItems();
@@ -60,6 +60,8 @@ private slots:
     void FindPaths();
     void ReadPaths();
 
+signals:
+    void UAVProcessed();
 
 private:
     QTimer timer;
@@ -75,6 +77,9 @@ private:
 private:
     QList<Item::UAV *> m_UAVs;
     QList<Item::Threat *> m_threats;
+
+private:
+    Item::UAV* m_currProcessedUAV = nullptr;
 
 private:
     QUdpSocket* listen;

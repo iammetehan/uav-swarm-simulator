@@ -4,6 +4,7 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+//#include <QPainterPath>
 
 
 Item::UAV::UAV(const QString &model,
@@ -22,20 +23,7 @@ Item::UAV::UAV(const QString &model,
 
 QRectF Item::UAV::boundingRect() const
 {
-    if (showCurrentPath)
-    {
-        return ItemBRect().united(Lines().boundingRect());
-    }
-
     return ItemBRect();
-}
-
-QPainterPath Item::UAV::shape() const
-{
-    QPainterPath path;
-    path.addRect(ItemBRect());
-
-    return path;
 }
 
 Item::SimItem *Item::UAV::Clone(SimItem* simItem) const
@@ -48,10 +36,33 @@ Item::SimItem *Item::UAV::Clone(SimItem* simItem) const
 
 void Item::UAV::Step()
 {
+    SimItem::Step();
+
     if (!arrived)
     {
         setPos(NextPos());
     }
+}
+
+void Item::UAV::ResetSimulation()
+{
+    SimItem::ResetSimulation();
+
+    arrived = false;
+    nextPointIndex = 0;
+}
+
+void Item::UAV::BeforeSimulation()
+{
+    SimItem::BeforeSimulation();
+    ResetSimulation();
+    m_firstSource = Source();
+}
+
+void Item::UAV::AfterSimulation()
+{
+    SimItem::AfterSimulation();
+    ResetSimulation();
 }
 
 void Item::UAV::paint(QPainter *painter,
@@ -65,18 +76,6 @@ void Item::UAV::paint(QPainter *painter,
     if (arrived)
     {
         painter->drawText(QPointF(0,0), "Arrived!");
-    }
-
-    if (showCurrentPath)
-    {
-        QPen pen;
-        pen.setBrush(m_color);
-        pen.setWidth(3);
-
-        painter->setPen(pen);
-        painter->setBrush(Qt::transparent);
-
-        painter->drawPath(Lines());
     }
 }
 
@@ -95,10 +94,10 @@ QRectF Item::UAV::ItemBRect() const
 QPainterPath Item::UAV::Lines() const
 {
     QPainterPath lines;
-    lines.moveTo(QPointF(0, 0));
+    lines.moveTo(m_firstSource);
     for(const QPointF& p: CurrentPath())
     {
-        lines.lineTo(mapFromScene(p));
+        lines.lineTo(p);
     }
 
     return lines;
@@ -109,6 +108,11 @@ QPointF Item::UAV::NextPos()
     QPointF nextPos = pos() + AddLengthToPoint(stepSize,
                                                AngleBtwPoints(pos(), NextPoint()));
     QRectF area(pos(), nextPos);
+
+    if (0 == area.height())
+    {
+        area.setHeight(1);
+    }
 
     if (area.contains(NextPoint()))
     {
@@ -153,6 +157,26 @@ qreal Item::UAV::LengthBtwPoints(const QPointF &p1, const QPointF &p2) const
     return QLineF(p1, p2).length();
 }
 
+bool Item::UAV::ShowCurrentPath() const
+{
+    return showCurrentPath;
+}
+
+QPointF Item::UAV::Source() const
+{
+    return pos();
+}
+
+QPointF Item::UAV::Destination() const
+{
+    return m_destination;
+}
+
+void Item::UAV::SetDestination(const QPointF& destination)
+{
+    m_destination = destination;
+}
+
 const QVector<QVector<QPointF> > &Item::UAV::GetPaths() const
 {
     return paths;
@@ -163,13 +187,23 @@ void Item::UAV::SetPaths(const QVector<QVector<QPointF>> &newPaths)
     paths = newPaths;
 }
 
-const QVector<QPointF> &Item::UAV::CurrentPath() const
+QVector<QPointF> Item::UAV::CurrentPath() const
 {
     if (currentPathIndex < paths.size())
     {
-        return paths.at(currentPathIndex);
+        QVector<QPointF> path = paths.at(currentPathIndex);
+        path.append(Destination());
+        return path;
     }
     return defaultPath;
+}
+
+QVector<QPointF> Item::UAV::FullPath() const
+{
+    QVector<QPointF> fPath;
+    fPath.append(Source());
+    fPath.append(CurrentPath());
+    return fPath;
 }
 
 const QString &Item::UAV::Model() const
@@ -215,33 +249,26 @@ void Item::UAV::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         }
     }
 
-    QAction *showCurrPath = new QAction("Show Current Path");
-    showCurrPath->setCheckable(true);
-    menu.addAction(showCurrPath);
+    QAction *showCurrPathAction = new QAction("Show Current Path");
+    showCurrPathAction->setCheckable(true);
+    menu.addAction(showCurrPathAction);
 
     if (showCurrentPath)
     {
-        showCurrPath->setChecked(Qt::Checked);
+        showCurrPathAction->setChecked(Qt::Checked);
     }
     else
     {
-        showCurrPath->setChecked(Qt::Unchecked);
+        showCurrPathAction->setChecked(Qt::Unchecked);
     }
 
     QAction *a = menu.exec(event->screenPos());
 
     if (nullptr != a)
     {
-        if (showCurrPath == a)
+        if (showCurrPathAction == a)
         {
-            if (showCurrentPath)
-            {
-                showCurrentPath = false;
-            }
-            else
-            {
-                showCurrentPath = true;
-            }
+            showCurrentPath = !showCurrentPath;
         }
         else
         {
@@ -255,5 +282,6 @@ void Item::UAV::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     {
         delete action;
     }
-    delete showCurrPath;
+
+    delete showCurrPathAction;
 }

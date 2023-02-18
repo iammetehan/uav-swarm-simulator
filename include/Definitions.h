@@ -31,6 +31,8 @@ namespace Data
         std::size_t A() const;
         const QImage &Image() const;
         const QVector<QPointF> &Points() const;
+        QVector<QVector<QPointF>> IndexesToPaths(QVector<QVector<int>> indexes) const;
+        QVector<QPointF> IndexesToPath(QVector<int> indexes) const;
 
     private:
         std::size_t m_w;

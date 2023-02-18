@@ -19,7 +19,10 @@ public:
 
 
 public:
+    virtual void BeforeSimulation();
+    virtual void AfterSimulation();
     virtual void Step();
+    virtual void ResetSimulation();
 
 protected:
     virtual SimItem* Clone(SimItem* simItem = nullptr) const;

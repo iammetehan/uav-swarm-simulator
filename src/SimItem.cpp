@@ -57,7 +57,22 @@ void Item::SimItem::SetName(const QString &name)
     m_name = name;
 }
 
+void Item::SimItem::BeforeSimulation()
+{
+    // meteaydn: make the function pure
+}
+
+void Item::SimItem::AfterSimulation()
+{
+    // meteaydn: make the function pure
+}
+
 void Item::SimItem::Step()
+{
+    // meteaydn: make the function pure
+}
+
+void Item::SimItem::ResetSimulation()
 {
     // meteaydn: make the function pure
 }

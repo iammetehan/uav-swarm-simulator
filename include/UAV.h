@@ -15,14 +15,16 @@ public:
 
 public:
     QRectF boundingRect() const override;
-    QPainterPath shape() const override;
 
 public:
     Item::SimItem *Clone(SimItem *simItem = nullptr) const override;
 
 public:
     void Step() override;
+    void ResetSimulation() override;
 
+    void BeforeSimulation() override;
+    void AfterSimulation() override;
 public:
     const QColor &Color() const;
     const QString &Model() const;
@@ -33,9 +35,17 @@ public:
     const QVector<QVector<QPointF>> &GetPaths() const;
     void SetPaths(const QVector<QVector<QPointF>> &newPaths);
 
-    const QVector<QPointF> &CurrentPath() const;
+    QVector<QPointF> CurrentPath() const;
+    QVector<QPointF> FullPath() const;
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
+
+    QPointF Source() const;
+    void SetDestination(const QPointF& destination);
+    QPointF Destination() const;
+
+    bool ShowCurrentPath() const;
+    QPainterPath Lines() const;
 
 protected:
     void paint(QPainter *painter,
@@ -44,7 +54,6 @@ protected:
 
 private:
     QRectF ItemBRect() const;
-    QPainterPath Lines() const;
 
 private:
     QPointF NextPos();
@@ -74,7 +83,9 @@ private:
     bool showCurrentPath = false;
     std::size_t currentPathIndex = 0;
     QVector<QPointF> defaultPath;
+    QPointF m_firstSource;
     QVector<QVector<QPointF>> paths;
+    QPointF m_destination;
 
 private:
     const qreal m_drawing_radius = 24;

@@ -50,6 +50,29 @@ const QVector<QPointF> &Data::Map::Points() const
     return points;
 }
 
+QVector<QVector<QPointF> > Data::Map::IndexesToPaths(QVector<QVector<int> > indexes) const
+{
+    QVector<QVector<QPointF>> paths;
+    for (const QVector<int>& pathIndexes: indexes)
+    {
+        paths.append(IndexesToPath(pathIndexes));
+    }
+
+    return paths;
+}
+
+QVector<QPointF> Data::Map::IndexesToPath(QVector<int> indexes) const
+{
+    QVector<QPointF> points;
+    for (const int& i: indexes)
+    {
+        points.append(this->points.at(i));
+    }
+
+    return points;
+}
+
+
 QRegularExpressionValidator *Data::IntegerRegularExp()
 {
     return new QRegularExpressionValidator(QRegularExpression("[0-9]*"));
