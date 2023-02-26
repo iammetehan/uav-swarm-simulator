@@ -24,12 +24,14 @@ void Display::Scene::drawBackground(QPainter *painter, const QRectF &rect)
     using namespace Item;
 
     painter->drawImage(m_map.Image().rect(), m_map.Image());
-    painter->setBrush(Qt::blue);
 
+#ifdef SHOWGRID
+    painter->setBrush(Qt::blue);
     for (const QPointF& point : m_map.Points())
     {
         painter->drawEllipse(point, Map::PointRadius(), Map::PointRadius());
     }
+#endif
 
     for(QGraphicsItem* item: items())
     {

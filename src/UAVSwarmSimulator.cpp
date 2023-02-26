@@ -5,6 +5,7 @@
 #include "AddNewUAVDialog.h"
 #include "AddNewThreatDialog.h"
 #include "ManageSwarmDialog.h"
+#include "ManageMissionDialog.h"
 
 #include <iterator>
 #include <QDebug>
@@ -20,6 +21,7 @@ UAVSwarmSimulator::UAVSwarmSimulator(QWidget *parent)
     m_scene = new Display::Scene(this);
     ui->view->setScene(m_scene);
 
+    AddDefMission();
     AddDefSimItems();
     SetDefaultSwarm();
 
@@ -27,6 +29,7 @@ UAVSwarmSimulator::UAVSwarmSimulator(QWidget *parent)
     connect(ui->addNewUAV, SIGNAL(clicked()), this, SLOT(AddNewUAV()));
     connect(ui->addNewThreat, SIGNAL(clicked()), this, SLOT(AddNewThreat()));
     connect(ui->manageSwarm, SIGNAL(clicked()), this, SLOT(ManageSwarm()));
+    connect(ui->manageMission, SIGNAL(clicked()), this, SLOT(ManageMission()));
     connect(ui->startSimulation, SIGNAL(clicked()), this, SLOT(StartSimulation()));
     connect(ui->stopSimulation, SIGNAL(clicked()), this, SLOT(StopSimulation()));
     connect(&timer, SIGNAL(timeout()), this, SLOT(DoStep()));
@@ -52,15 +55,15 @@ void UAVSwarmSimulator::AddDefSimItems()
 
 void UAVSwarmSimulator::AddDefUAVModels()
 {
-    AddUAVModel(new Item::UAV(QString("DJI 1"),
+    AddUAVModel(new Item::UAV(QString("DJI_1"),
                               QColor(Qt::red),
                               10,
                               20));
-    AddUAVModel(new Item::UAV(QString("DJI 2"),
+    AddUAVModel(new Item::UAV(QString("DJI_2"),
                               QColor(Qt::green),
                               10,
                               20));
-    AddUAVModel(new Item::UAV(QString("DJI 3"),
+    AddUAVModel(new Item::UAV(QString("DJI_3"),
                               QColor(Qt::blue),
                               10,
                               20));
@@ -76,6 +79,16 @@ void UAVSwarmSimulator::AddDefThreatTypes()
     AddThreatType(new Item::Threat(QString("Air Defense Missiles"),
                                    270,
                                    320,
+                                   QColor(Qt::yellow)));
+
+    AddThreatType(new Item::Threat(QString("Storm"),
+                                   150,
+                                   250,
+                                   QColor(Qt::magenta)));
+
+    AddThreatType(new Item::Threat(QString("Rain"),
+                                   200,
+                                   180,
                                    QColor(Qt::blue)));
 }
 
@@ -86,13 +99,28 @@ void UAVSwarmSimulator::AddUAVModel(Item::UAV* uavModel)
 
 void UAVSwarmSimulator::AddThreatType(Item::Threat* threatType)
 {
-    m_threadTypes.append(threatType);
+    m_threatTypes.append(threatType);
 }
 
 void UAVSwarmSimulator::SetMap(const Data::Map &map)
 {
     m_scene->SetMap(map);
     m_scene->setSceneRect(map.Image().rect());
+}
+
+void UAVSwarmSimulator::SetDestinations()
+{
+    int size = m_UAVs.size() < 2 ? 1 : m_UAVs.size() - 1;
+    qreal offset = m_mission->boundingRect().height() / size;
+    QPointF dest = QPointF(m_mission->sceneBoundingRect().center().x(),
+                                m_mission->sceneBoundingRect().top());
+
+    for (int i = 0; i < m_UAVs.size(); i++)
+    {
+        m_UAVs.at(i)->SetDestination(dest);
+        dest.setY(dest.y() + offset);
+    }
+
 }
 
 void UAVSwarmSimulator::SelectMap()
@@ -126,18 +154,18 @@ void UAVSwarmSimulator::SetDefaultSwarm()
         {
             path.append(m_scene->Map().Points().at(rand() % m_scene->Map().Points().size()));
         }
-        uav->SetDestination(QPointF(700, 700));
+        uav->SetDestination(QPointF(0, 0));
     }
 
-    for (const Threat* threat: m_threadTypes)
+    for (const Threat* threat: m_threatTypes)
     {
-        m_threats.append(ManageSwarmDialog::GetThreatInstances(threat, 3));
+        m_threats.append(ManageSwarmDialog::GetThreatInstances(threat, 1));
     }
 
-    SetDefaultPositions();
+    AddItemsToScene();
 }
 
-void UAVSwarmSimulator::SetDefaultPositions()
+void UAVSwarmSimulator::AddItemsToScene()
 {
     using namespace Item;
 
@@ -154,6 +182,21 @@ void UAVSwarmSimulator::SetDefaultPositions()
         m_scene->addItem(threat);
         threat->setPos(a, a);
         a += 50;
+    }
+}
+
+void UAVSwarmSimulator::RemoveItemsFromScene()
+{
+    using namespace Item;
+
+    for (UAV* uav: m_UAVs)
+    {
+        m_scene->removeItem(uav);
+    }
+
+    for (Threat* threat: m_threats)
+    {
+        m_scene->removeItem(threat);
     }
 }
 
@@ -179,14 +222,24 @@ void UAVSwarmSimulator::ManageSwarm()
 {
     using namespace Item;
 
-    ManageSwarmDialog manageSwarmDialog(m_UAVModels, m_threadTypes);
+    ManageSwarmDialog manageSwarmDialog(m_UAVModels, m_threatTypes);
     if (QDialog::Accepted == manageSwarmDialog.exec())
     {
+        RemoveItemsFromScene();
+
         m_UAVs = manageSwarmDialog.GetUAVs();
         m_threats = manageSwarmDialog.GetThreats();
 
-        SetDefaultPositions();
+        AddItemsToScene();
     }
+}
+
+void UAVSwarmSimulator::ManageMission()
+{
+    using namespace Item;
+
+    ManageMissionDialog manageMissionDialog(m_mission);
+    manageMissionDialog.exec();
 }
 
 void UAVSwarmSimulator::StartSimulation()
@@ -204,7 +257,7 @@ void UAVSwarmSimulator::StartSimulation()
 void UAVSwarmSimulator::DoStep()
 {
     using namespace Item;
-    qDebug() << "Updated";
+    qDebug() << "DoStep";
 
     for(UAV* uav: m_UAVs)
     {
@@ -236,24 +289,20 @@ void UAVSwarmSimulator::FindPaths()
 {
     using namespace Item;
 
-    qDebug() << "1";
-
     if (nullptr == m_currProcessedUAV)
     {
-        qDebug() << "2";
+        SetDestinations();
         m_currProcessedUAV = m_UAVs.first();
     }
     else
     {
         if (m_currProcessedUAV == m_UAVs.last())
         {
-            qDebug() << "3";
             m_currProcessedUAV = nullptr;
             return;
         }
         else
         {
-            qDebug() << "4";
             int index = m_UAVs.indexOf(m_currProcessedUAV) + 1;
             m_currProcessedUAV = m_UAVs.at(index);
         }
@@ -280,6 +329,13 @@ QList<int> UAVSwarmSimulator::ConvertToIntPaths(const QList<bool> boolPaths) con
         }
     }
     return intPaths;
+}
+
+void UAVSwarmSimulator::AddDefMission()
+{
+    m_mission = new Item::Mission(Item::Surveillance(), 100, 150);
+    m_scene->addItem(m_mission);
+    m_mission->setPos(850, 500);
 }
 
 void UAVSwarmSimulator::SendMapPointData() const

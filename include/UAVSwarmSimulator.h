@@ -26,7 +26,8 @@ public:
 
 public:
     void SetDefaultSwarm();
-    void SetDefaultPositions();
+    void AddItemsToScene();
+    void RemoveItemsFromScene();
 
 private:
     void SendMapPointData() const;
@@ -37,6 +38,7 @@ private:
     QList<int> ConvertToIntPaths(const QList<bool> boolPoints) const;
 
 private:
+    void AddDefMission();
     void AddDefSimItems();
     void AddDefUAVModels();
     void AddDefThreatTypes();
@@ -48,11 +50,15 @@ private:
 private:
     void SetMap(const Data::Map &map);
 
+private:
+    void SetDestinations();
+
 private slots:
     void SelectMap();
     void AddNewUAV();
     void AddNewThreat();
     void ManageSwarm();
+    void ManageMission();
     void StartSimulation();
     void DoStep();
     void StopSimulation();
@@ -72,11 +78,14 @@ private:
 
 private:
     QList<Item::UAV *> m_UAVModels;
-    QList<Item::Threat *> m_threadTypes;
+    QList<Item::Threat *> m_threatTypes;
 
 private:
     QList<Item::UAV *> m_UAVs;
     QList<Item::Threat *> m_threats;
+
+private:
+    Item::Mission* m_mission;
 
 private:
     Item::UAV* m_currProcessedUAV = nullptr;

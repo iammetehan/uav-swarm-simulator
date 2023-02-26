@@ -28,6 +28,8 @@ QRectF Item::Threat::boundingRect() const
 
 void Item::Threat::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    SimItem::paint(painter, option, widget);
+
     painter->setOpacity(0.3);
     painter->setBrush(m_color);
     painter->drawRect(boundingRect());

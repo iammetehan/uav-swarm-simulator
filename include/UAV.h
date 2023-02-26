@@ -25,6 +25,7 @@ public:
 
     void BeforeSimulation() override;
     void AfterSimulation() override;
+
 public:
     const QColor &Color() const;
     const QString &Model() const;
@@ -46,6 +47,8 @@ public:
 
     bool ShowCurrentPath() const;
     QPainterPath Lines() const;
+
+    bool IsArrived() const;
 
 protected:
     void paint(QPainter *painter,

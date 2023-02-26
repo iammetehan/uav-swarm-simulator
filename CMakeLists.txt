@@ -11,6 +11,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+#add_definitions(-DSHOWGRID)
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
 set(CMAKE_AUTOUIC_SEARCH_PATHS ui)
@@ -24,10 +26,12 @@ set(PROJECT_SOURCES
         src/AddNewUAVDialog.cpp
         src/AddNewThreatDialog.cpp
         src/ManageSwarmDialog.cpp
+        src/ManageMissionDialog.cpp
         src/Definitions.cpp
         src/SimItem.cpp
         src/UAV.cpp
         src/Threat.cpp
+        src/Mission.cpp
         src/Viewer.cpp
         src/Scene.cpp
         include/UAVSwarmSimulator.h
@@ -35,10 +39,12 @@ set(PROJECT_SOURCES
         include/AddNewUAVDialog.h
         include/AddNewThreatDialog.h
         include/ManageSwarmDialog.h
+        include/ManageMissionDialog.h
         include/Definitions.h
         include/SimItem.h
         include/UAV.h
         include/Threat.h
+        include/Mission.h
         include/Viewer.h
         include/Scene.h
         ui/UAVSwarmSimulator.ui
@@ -46,6 +52,7 @@ set(PROJECT_SOURCES
         ui/AddNewUAVDialog.ui
         ui/AddNewThreatDialog.ui
         ui/ManageSwarmDialog.ui
+        ui/ManageMissionDialog.ui
 )
 
 

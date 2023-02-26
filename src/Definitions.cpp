@@ -77,3 +77,8 @@ QRegularExpressionValidator *Data::IntegerRegularExp()
 {
     return new QRegularExpressionValidator(QRegularExpression("[0-9]*"));
 }
+
+QStringList Item::MissionTypes()
+{
+    return QStringList({Surveillance(), Reconnaissance()});
+}

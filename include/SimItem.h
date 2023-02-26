@@ -13,10 +13,13 @@ public:
     virtual ~SimItem();
 
 public:
+    void paint(QPainter *painter,
+               const QStyleOptionGraphicsItem *option,
+               QWidget *widget) override;
+
+public:
     const QString &Name() const;
     void SetName(const QString& name);
-
-
 
 public:
     virtual void BeforeSimulation();
@@ -27,7 +30,11 @@ public:
 protected:
     virtual SimItem* Clone(SimItem* simItem = nullptr) const;
 
+protected:
+    bool IsSimulationStarted() const;
+
 private:
+    bool m_isSimulationStarted;
     QString m_name;
 
 protected:

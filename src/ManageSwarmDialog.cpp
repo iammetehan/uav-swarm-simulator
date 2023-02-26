@@ -94,7 +94,9 @@ QList<Item::UAV *> ManageSwarmDialog::GetUAVInstances(const Item::UAV* uav,
     QList<UAV *> UAVs;
     for (int i = 0; i < numOfUAVs; i++)
     {
-        UAVs.append(dynamic_cast<UAV *> (uav->Clone()));
+        UAV *nUav = dynamic_cast<UAV *> (uav->Clone());
+        nUav->SetName(nUav->Model() + " " + QString::number(i + 1));
+        UAVs.append(nUav);
     }
 
     return UAVs;
@@ -126,7 +128,9 @@ QList<Item::Threat *> ManageSwarmDialog::GetThreatInstances(const Item::Threat* 
 
       for (int i = 0; i < numOfThreads; i++)
       {
-          threats.append(dynamic_cast<Threat *> (threat->Clone()));
+          Threat *nThreat = dynamic_cast<Threat *> (threat->Clone());
+          nThreat->SetName(nThreat->Type() + " " + QString::number(i + 1));
+          threats.append(nThreat);
       }
 
     return threats;

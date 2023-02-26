@@ -4,7 +4,6 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsScene>
 #include <QGraphicsView>
-//#include <QPainterPath>
 
 
 Item::UAV::UAV(const QString &model,
@@ -69,6 +68,8 @@ void Item::UAV::paint(QPainter *painter,
                       const QStyleOptionGraphicsItem *option,
                       QWidget *widget)
 {
+    SimItem::paint(painter, option, widget);
+
     painter->setBrush(m_color);
     painter->setOpacity(0.8);
     painter->drawEllipse(ItemBRect());
@@ -94,7 +95,16 @@ QRectF Item::UAV::ItemBRect() const
 QPainterPath Item::UAV::Lines() const
 {
     QPainterPath lines;
-    lines.moveTo(m_firstSource);
+
+    if (IsSimulationStarted())
+    {
+        lines.moveTo(m_firstSource);
+    }
+    else
+    {
+        lines.moveTo(Source());
+    }
+
     for(const QPointF& p: CurrentPath())
     {
         lines.lineTo(p);
@@ -108,6 +118,11 @@ QPointF Item::UAV::NextPos()
     QPointF nextPos = pos() + AddLengthToPoint(stepSize,
                                                AngleBtwPoints(pos(), NextPoint()));
     QRectF area(pos(), nextPos);
+
+    if (0 == area.width())
+    {
+        area.setWidth(1);
+    }
 
     if (0 == area.height())
     {
@@ -155,6 +170,11 @@ qreal Item::UAV::AngleBtwPoints(const QPointF &p1, const QPointF &p2) const
 qreal Item::UAV::LengthBtwPoints(const QPointF &p1, const QPointF &p2) const
 {
     return QLineF(p1, p2).length();
+}
+
+bool Item::UAV::IsArrived() const
+{
+    return arrived;
 }
 
 bool Item::UAV::ShowCurrentPath() const
