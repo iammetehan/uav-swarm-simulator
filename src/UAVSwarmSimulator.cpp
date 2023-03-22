@@ -33,7 +33,6 @@ UAVSwarmSimulator::UAVSwarmSimulator(QWidget *parent)
     connect(ui->startSimulation, SIGNAL(clicked()), this, SLOT(StartSimulation()));
     connect(ui->stopSimulation, SIGNAL(clicked()), this, SLOT(StopSimulation()));
     connect(&timer, SIGNAL(timeout()), this, SLOT(DoStep()));
-    connect(ui->updateServer, SIGNAL(clicked()), this, SLOT(UpdateServer()));
     connect(ui->findPaths, SIGNAL(clicked()), this, SLOT(FindPaths()));
 
     listen = new QUdpSocket(this);
@@ -292,6 +291,7 @@ void UAVSwarmSimulator::FindPaths()
     if (nullptr == m_currProcessedUAV)
     {
         SetDestinations();
+        UpdateServer();
         m_currProcessedUAV = m_UAVs.first();
     }
     else

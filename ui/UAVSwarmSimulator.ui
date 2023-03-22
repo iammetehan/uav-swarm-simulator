@@ -110,13 +110,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="updateServer">
-        <property name="text">
-         <string>Update Server</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="findPaths">
         <property name="text">
          <string>Find Paths</string>
