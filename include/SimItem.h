@@ -33,14 +33,14 @@ protected:
 protected:
     bool IsSimulationStarted() const;
 
-private:
-    bool m_isSimulationStarted;
-    QString m_name;
-
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+
+private:
+    bool m_isSimulationStarted;
+    QString m_name;
 };
 
 #endif // SIMITEM_H

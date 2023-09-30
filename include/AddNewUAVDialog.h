@@ -17,7 +17,7 @@ public:
     ~AddNewUAVDialog();
 
 public:
-    [[nodiscard]] Item::UAV *NewUAV();
+    [[nodiscard]] Item::UAV* NewUAV();
 
 private slots:
     void SelectColor();

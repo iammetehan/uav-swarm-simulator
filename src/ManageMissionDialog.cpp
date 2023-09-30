@@ -1,10 +1,8 @@
 #include "ManageMissionDialog.h"
 #include "ui_ManageMissionDialog.h"
 
-ManageMissionDialog::ManageMissionDialog(Item::Mission *mission,
-                                         QWidget *parent) :
+ManageMissionDialog::ManageMissionDialog(QWidget *parent) :
     QDialog(parent),
-    m_mission(mission),
     ui(new Ui::ManageMissionDialog)
 {
     ui->setupUi(this);
@@ -13,6 +11,11 @@ ManageMissionDialog::ManageMissionDialog(Item::Mission *mission,
 
     connect(ui->OK, SIGNAL(clicked()), this, SLOT(Accept()));
     connect(ui->cancel, SIGNAL(clicked()), this, SLOT(reject()));
+}
+
+void ManageMissionDialog::SetDefaultMission(Item::Mission *mission)
+{
+    m_mission = mission;
 
     ui->types->setCurrentText(mission->Type());
     ui->width->setText(QString::number(mission->Width()));

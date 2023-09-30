@@ -20,7 +20,6 @@ ManageSwarmDialog::ManageSwarmDialog(const QList<Item::UAV *> &UAVModels,
     connect(ui->cancel, SIGNAL(clicked()), this, SLOT(reject()));
 
     CreateSimItemWidgets();
-
 }
 
 ManageSwarmDialog::~ManageSwarmDialog()

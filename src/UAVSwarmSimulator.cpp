@@ -32,18 +32,17 @@ UAVSwarmSimulator::UAVSwarmSimulator(QWidget *parent)
     connect(ui->manageMission, SIGNAL(clicked()), this, SLOT(ManageMission()));
     connect(ui->startSimulation, SIGNAL(clicked()), this, SLOT(StartSimulation()));
     connect(ui->stopSimulation, SIGNAL(clicked()), this, SLOT(StopSimulation()));
-    connect(&timer, SIGNAL(timeout()), this, SLOT(DoStep()));
+    connect(&m_timer, SIGNAL(timeout()), this, SLOT(DoStep()));
     connect(ui->findPaths, SIGNAL(clicked()), this, SLOT(FindPaths()));
 
-    listen = new QUdpSocket(this);
-    listen->bind(QHostAddress::LocalHost, 4655);
+    m_listen = new QUdpSocket(this);
+    m_listen->bind(QHostAddress::LocalHost, 4655);
 
-    connect(listen, &QUdpSocket::readyRead,
+    connect(m_listen, &QUdpSocket::readyRead,
             this, &UAVSwarmSimulator::ReadPaths);
 
     connect(this, &UAVSwarmSimulator::UAVProcessed,
             this, &UAVSwarmSimulator::FindPaths);
-
 }
 
 void UAVSwarmSimulator::AddDefSimItems()
@@ -54,18 +53,14 @@ void UAVSwarmSimulator::AddDefSimItems()
 
 void UAVSwarmSimulator::AddDefUAVModels()
 {
-    AddUAVModel(new Item::UAV(QString("DJI_1"),
-                              QColor(Qt::red),
-                              10,
-                              20));
-    AddUAVModel(new Item::UAV(QString("DJI_2"),
-                              QColor(Qt::green),
-                              10,
-                              20));
-    AddUAVModel(new Item::UAV(QString("DJI_3"),
-                              QColor(Qt::blue),
-                              10,
-                              20));
+    AddUAVModel(new Item::UAV(QString("DJI Phantom 4 Pro"),
+                              QColor(Qt::red)));
+
+    AddUAVModel(new Item::UAV(QString("DJI Mavic 2 Pro"),
+                              QColor(Qt::green)));
+
+    AddUAVModel(new Item::UAV(QString("DJI Inspire 2"),
+                              QColor(Qt::blue)));
 }
 
 void UAVSwarmSimulator::AddDefThreatTypes()
@@ -119,7 +114,6 @@ void UAVSwarmSimulator::SetDestinations()
         m_UAVs.at(i)->SetDestination(dest);
         dest.setY(dest.y() + offset);
     }
-
 }
 
 void UAVSwarmSimulator::SelectMap()
@@ -135,14 +129,18 @@ void UAVSwarmSimulator::SetDefaultSwarm()
 {
     using namespace Item;
 
-    SetMap(Data::Map(500,
-                     400,
-                     100,
-                     "D:/images/map1.PNG"));
+    SetMap(Data::Map("D:/images/map1.PNG"));
 
     for (const UAV* uav: m_UAVModels)
     {
-        m_UAVs.append(ManageSwarmDialog::GetUAVInstances(uav, 1));
+        if ("DJI Mavic 2 Pro" == uav->Model())
+        {
+            m_UAVs.append(ManageSwarmDialog::GetUAVInstances(uav, 2));
+        }
+        else
+        {
+            m_UAVs.append(ManageSwarmDialog::GetUAVInstances(uav, 1));
+        }
     }
 
     for (UAV* uav: m_UAVs)
@@ -168,20 +166,25 @@ void UAVSwarmSimulator::AddItemsToScene()
 {
     using namespace Item;
 
-    int a = 5;
+    int x = 100;
+    int y = 200;
     for (UAV* uav: m_UAVs)
     {
         m_scene->addItem(uav);
-        uav->setPos(a, a);
-        a += 50;
+        uav->setPos(x, y);
+        x += 100;
     }
+
+    x += 100;
 
     for (Threat* threat: m_threats)
     {
         m_scene->addItem(threat);
-        threat->setPos(a, a);
-        a += 50;
+        threat->setPos(x, y);
+        x += 150;
     }
+
+    m_scene->update();
 }
 
 void UAVSwarmSimulator::RemoveItemsFromScene()
@@ -237,9 +240,10 @@ void UAVSwarmSimulator::ManageMission()
 {
     using namespace Item;
 
-    ManageMissionDialog manageMissionDialog(m_mission);
+    ManageMissionDialog manageMissionDialog;
+    manageMissionDialog.SetDefaultMission(m_mission);
     manageMissionDialog.exec();
-}
+ }
 
 void UAVSwarmSimulator::StartSimulation()
 {
@@ -250,7 +254,7 @@ void UAVSwarmSimulator::StartSimulation()
         uav->BeforeSimulation();
     }
 
-    timer.start(timeOut);
+    m_timer.start(m_timeOut);
 }
 
 void UAVSwarmSimulator::DoStep()
@@ -270,7 +274,7 @@ void UAVSwarmSimulator::StopSimulation()
 {
     using namespace Item;
 
-    timer.stop();
+    m_timer.stop();
 
     for(UAV* uav: m_UAVs)
     {
@@ -394,7 +398,9 @@ void UAVSwarmSimulator::SendSrcDstData(const QPointF &src, const QPointF &dst) c
     qDebug() << srcDstData.size();
 
     QUdpSocket srcDstSocket;
-    srcDstSocket.writeDatagram(srcDstData.data(), srcDstData.size(), QHostAddress::LocalHost, 4653);
+    srcDstSocket.writeDatagram(srcDstData.data(),
+                               srcDstData.size(),
+                               QHostAddress::LocalHost, 4653);
 }
 
 void UAVSwarmSimulator::SendFindPathMsg() const
@@ -406,16 +412,19 @@ void UAVSwarmSimulator::SendFindPathMsg() const
     qDebug() << findPathData.size();
 
     QUdpSocket findPatSocket;
-    findPatSocket.writeDatagram(findPathData.data(), findPathData.size(), QHostAddress::LocalHost, 4654);
+    findPatSocket.writeDatagram(findPathData.data(),
+                                findPathData.size(),
+                                QHostAddress::LocalHost,
+                                4654);
 }
 
 void UAVSwarmSimulator::ReadPaths()
 {
     QByteArray datagram;
-    while (listen->hasPendingDatagrams())
+    while (m_listen->hasPendingDatagrams())
     {
-        datagram.resize(listen->pendingDatagramSize());
-        listen->readDatagram(datagram.data(),datagram.size());
+        datagram.resize(m_listen->pendingDatagramSize());
+        m_listen->readDatagram(datagram.data(),datagram.size());
     }
     qDebug() << datagram.size();
 

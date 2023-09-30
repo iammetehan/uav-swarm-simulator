@@ -14,10 +14,7 @@ namespace Data
     {
     public:
         Map();
-        Map(const std::size_t w,
-            const std::size_t h,
-            const std::size_t a,
-            const QString imgPath);
+        Map(const QString imgPath);
 
     public:
         static constexpr std::size_t TotalNumOfPoints(){ return HNumOfPoints() * WNumOfPoints(); }
@@ -26,20 +23,14 @@ namespace Data
         static constexpr qreal PointRadius(){ return 5.0; }
 
     public:
-        std::size_t W() const;
-        std::size_t H() const;
-        std::size_t A() const;
-        const QImage &Image() const;
-        const QVector<QPointF> &Points() const;
+        const QImage& Image() const;
+        const QVector<QPointF>& Points() const;
         QVector<QVector<QPointF>> IndexesToPaths(QVector<QVector<int>> indexes) const;
         QVector<QPointF> IndexesToPath(QVector<int> indexes) const;
 
     private:
-        std::size_t m_w;
-        std::size_t m_h;
-        std::size_t m_a;
         QImage m_image;
-        QVector<QPointF> points;
+        QVector<QPointF> m_points;
     };
 }
 

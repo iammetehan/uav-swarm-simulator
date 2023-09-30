@@ -9,8 +9,6 @@ class Item::UAV : public SimItem
 public:
     UAV(const QString& model = QString(),
         const QColor& m_color = QColor(Qt::black),
-        const uint& speed = 0,
-        const uint& batteryDuration = 0,
         QGraphicsItem *parent = nullptr);
 
 public:
@@ -29,9 +27,6 @@ public:
 public:
     const QColor &Color() const;
     const QString &Model() const;
-
-    const uint& Speed() const;
-    const uint& BatteryDuration() const;
 
     const QVector<QVector<QPointF>> &GetPaths() const;
     void SetPaths(const QVector<QVector<QPointF>> &newPaths);
@@ -70,24 +65,22 @@ private:
     qreal LengthBtwPoints(const QPointF& p1, const QPointF& p2) const;
 
 private:
-    bool arrived = false;
+    bool m_arrived = false;
 
 private:
-    qreal stepSize = 2; // px
-    int nextPointIndex = 0;
+    qreal m_stepSize = 2; // px
+    int m_nextPointIndex = 0;
 
 private:
     QColor m_color;
     QString m_model;
-    uint m_speed;
-    uint m_batteryDuration;
 
 private:
-    bool showCurrentPath = false;
-    std::size_t currentPathIndex = 0;
-    QVector<QPointF> defaultPath;
+    bool m_showCurrentPath = false;
+    std::size_t m_currentPathIndex = 0;
+    QVector<QPointF> m_defaultPath;
     QPointF m_firstSource;
-    QVector<QVector<QPointF>> paths;
+    QVector<QVector<QPointF>> m_paths;
     QPointF m_destination;
 
 private:

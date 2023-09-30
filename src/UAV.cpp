@@ -8,14 +8,10 @@
 
 Item::UAV::UAV(const QString &model,
                const QColor &color,
-               const uint &speed,
-               const uint &batteryDuration,
                QGraphicsItem *parent)
     : SimItem(parent),
       m_color(color),
-      m_model(model),
-      m_speed(speed),
-      m_batteryDuration(batteryDuration)
+      m_model(model)
 {
 
 }
@@ -28,16 +24,14 @@ QRectF Item::UAV::boundingRect() const
 Item::SimItem *Item::UAV::Clone(SimItem* simItem) const
 {
     return SimItem::Clone(new UAV(Model(),
-                                  Color(),
-                                  Speed(),
-                                  BatteryDuration()));
+                                  Color()));
 }
 
 void Item::UAV::Step()
 {
     SimItem::Step();
 
-    if (!arrived)
+    if (!m_arrived)
     {
         setPos(NextPos());
     }
@@ -47,8 +41,8 @@ void Item::UAV::ResetSimulation()
 {
     SimItem::ResetSimulation();
 
-    arrived = false;
-    nextPointIndex = 0;
+    m_arrived = false;
+    m_nextPointIndex = 0;
 }
 
 void Item::UAV::BeforeSimulation()
@@ -74,9 +68,9 @@ void Item::UAV::paint(QPainter *painter,
     painter->setOpacity(0.8);
     painter->drawEllipse(ItemBRect());
 
-    if (arrived)
+    if (m_arrived)
     {
-        painter->drawText(QPointF(0,0), "Arrived!");
+        painter->drawText(QPointF(0,0), "Completed!");
     }
 }
 
@@ -115,7 +109,7 @@ QPainterPath Item::UAV::Lines() const
 
 QPointF Item::UAV::NextPos()
 {
-    QPointF nextPos = pos() + AddLengthToPoint(stepSize,
+    QPointF nextPos = pos() + AddLengthToPoint(m_stepSize,
                                                AngleBtwPoints(pos(), NextPoint()));
     QRectF area(pos(), nextPos);
 
@@ -133,14 +127,14 @@ QPointF Item::UAV::NextPos()
     {
         if (NextPoint() == CurrentPath().last())
         {
-            arrived = true;
+            m_arrived = true;
             nextPos = CurrentPath().last();
         }
         else
         {
-            qreal nStepSize = stepSize - LengthBtwPoints(pos(), NextPoint());
+            qreal nStepSize = m_stepSize - LengthBtwPoints(pos(), NextPoint());
             QPointF currPoint = NextPoint();
-            nextPointIndex++;
+            m_nextPointIndex++;
             nextPos = currPoint + AddLengthToPoint(nStepSize,
                                                      AngleBtwPoints(currPoint, NextPoint()));
         }
@@ -151,7 +145,7 @@ QPointF Item::UAV::NextPos()
 
 const QPointF &Item::UAV::NextPoint() const
 {
-    return CurrentPath().at(nextPointIndex);
+    return CurrentPath().at(m_nextPointIndex);
 }
 
 QPointF Item::UAV::AddLengthToPoint(const qreal& length, const qreal& angle) const
@@ -174,12 +168,12 @@ qreal Item::UAV::LengthBtwPoints(const QPointF &p1, const QPointF &p2) const
 
 bool Item::UAV::IsArrived() const
 {
-    return arrived;
+    return m_arrived;
 }
 
 bool Item::UAV::ShowCurrentPath() const
 {
-    return showCurrentPath;
+    return m_showCurrentPath;
 }
 
 QPointF Item::UAV::Source() const
@@ -199,23 +193,23 @@ void Item::UAV::SetDestination(const QPointF& destination)
 
 const QVector<QVector<QPointF> > &Item::UAV::GetPaths() const
 {
-    return paths;
+    return m_paths;
 }
 
 void Item::UAV::SetPaths(const QVector<QVector<QPointF>> &newPaths)
 {
-    paths = newPaths;
+    m_paths = newPaths;
 }
 
 QVector<QPointF> Item::UAV::CurrentPath() const
 {
-    if (currentPathIndex < paths.size())
+    if (m_currentPathIndex < m_paths.size())
     {
-        QVector<QPointF> path = paths.at(currentPathIndex);
+        QVector<QPointF> path = m_paths.at(m_currentPathIndex);
         path.append(Destination());
         return path;
     }
-    return defaultPath;
+    return m_defaultPath;
 }
 
 QVector<QPointF> Item::UAV::FullPath() const
@@ -236,22 +230,12 @@ const QColor &Item::UAV::Color() const
     return m_color;
 }
 
-const uint &Item::UAV::Speed() const
-{
-    return m_speed;
-}
-
-const uint &Item::UAV::BatteryDuration() const
-{
-    return m_batteryDuration;
-}
-
 void Item::UAV::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     QVector<QAction*> actions;
     QMenu menu;
 
-    for(int i = 0; i < paths.size(); i++)
+    for(int i = 0; i < m_paths.size(); i++)
     {
         QAction *action = new QAction("Path " + QString::number(i + 1));
         action->setCheckable(true);
@@ -259,7 +243,7 @@ void Item::UAV::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         actions.append(action);
         menu.addAction(action);
 
-        if (currentPathIndex == i)
+        if (m_currentPathIndex == i)
         {
             action->setChecked(Qt::Checked);
         }
@@ -273,7 +257,7 @@ void Item::UAV::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     showCurrPathAction->setCheckable(true);
     menu.addAction(showCurrPathAction);
 
-    if (showCurrentPath)
+    if (m_showCurrentPath)
     {
         showCurrPathAction->setChecked(Qt::Checked);
     }
@@ -288,11 +272,11 @@ void Item::UAV::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     {
         if (showCurrPathAction == a)
         {
-            showCurrentPath = !showCurrentPath;
+            m_showCurrentPath = !m_showCurrentPath;
         }
         else
         {
-            currentPathIndex = actions.indexOf(a);
+            m_currentPathIndex = actions.indexOf(a);
             qDebug() << "Selected path :" << a->text();
         }
         scene()->invalidate(Item::SceneRect());

@@ -19,7 +19,7 @@ public:
 public:
     Data::Map Map() const;
 
-public slots:
+private slots:
     void SelectImage();
 
 private:

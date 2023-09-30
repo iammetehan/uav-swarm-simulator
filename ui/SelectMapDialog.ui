@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>549</width>
-    <height>144</height>
+    <width>566</width>
+    <height>100</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -46,50 +46,9 @@
        <item>
         <widget class="QPushButton" name="selectImage">
          <property name="text">
-          <string>Select Image</string>
+          <string>Select Map</string>
          </property>
         </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <property name="spacing">
-        <number>8</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="label1">
-         <property name="text">
-          <string>Width    :</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="leWidth">
-         <property name="inputMask">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label2">
-         <property name="text">
-          <string>Height   :</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="leHeight"/>
-       </item>
-       <item>
-        <widget class="QLabel" name="label3">
-         <property name="text">
-          <string>Altitude :</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="leAltitude"/>
        </item>
       </layout>
      </item>

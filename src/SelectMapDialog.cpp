@@ -9,10 +9,6 @@ SelectMapDialog::SelectMapDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->leWidth->setValidator(Data::IntegerRegularExp());
-    ui->leHeight->setValidator(Data::IntegerRegularExp());
-    ui->leAltitude->setValidator(Data::IntegerRegularExp());
-
     connect(ui->selectImage, SIGNAL(clicked()), this, SLOT(SelectImage()));
     connect(ui->OK, SIGNAL(clicked()), this, SLOT(accept()));
     connect(ui->cancel, SIGNAL(clicked()), this, SLOT(reject()));
@@ -25,10 +21,7 @@ SelectMapDialog::~SelectMapDialog()
 
 Data::Map SelectMapDialog::Map() const
 {
-    return Data::Map(ui->leWidth->text().toInt(),
-                     ui->leHeight->text().toInt(),
-                     ui->leAltitude->text().toInt(),
-                     ui->selectedImage->text());
+    return Data::Map(ui->selectedImage->text());
 }
 
 void SelectMapDialog::SelectImage()

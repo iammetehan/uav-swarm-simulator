@@ -5,7 +5,7 @@ Item::Mission::Mission(const QString &type,
                      const qreal &width,
                      const qreal &height,
                      QGraphicsItem *parent)
-    : SimItem("Mission :" + type, parent),
+    : SimItem("Mission: " + type, parent),
       m_type(type),
       m_width(width),
       m_height(height),

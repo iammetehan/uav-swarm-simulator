@@ -10,10 +10,12 @@ AddNewUAVDialog::AddNewUAVDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->speed->setValidator(Data::IntegerRegularExp());
-    ui->batteryDuration->setValidator(Data::IntegerRegularExp());
+    ui->selectedColor->setAutoFillBackground(true);
+    ui->selectedColor->setPalette(QPalette(Qt::red));
 
-    connect(ui->selectImage, SIGNAL(clicked()), this, SLOT(SelectImage()));
+    ui->UAVModel->setText("New Model");
+
+    connect(ui->selectImage, SIGNAL(clicked()), this, SLOT(SelectColor()));
     connect(ui->OK, SIGNAL(clicked()), this, SLOT(accept()));
     connect(ui->cancel, SIGNAL(clicked()), this, SLOT(reject()));
 }
@@ -32,7 +34,5 @@ void AddNewUAVDialog::SelectColor()
 Item::UAV* AddNewUAVDialog::NewUAV()
 {
     return new Item::UAV(ui->UAVModel->text(),
-                         ui->selectedColor->palette().color(QPalette::ColorRole::Button),
-                         ui->speed->text().toInt(),
-                         ui->batteryDuration->text().toInt());
+                         ui->selectedColor->palette().color(QPalette::ColorRole::Button));
 }

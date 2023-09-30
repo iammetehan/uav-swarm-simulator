@@ -25,7 +25,7 @@ void Display::Scene::drawBackground(QPainter *painter, const QRectF &rect)
 
     painter->drawImage(m_map.Image().rect(), m_map.Image());
 
-#ifdef SHOWGRID
+#ifdef SHOWMAPPOINTS
     painter->setBrush(Qt::blue);
     for (const QPointF& point : m_map.Points())
     {

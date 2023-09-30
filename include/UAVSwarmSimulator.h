@@ -24,7 +24,7 @@ public:
     UAVSwarmSimulator(QWidget *parent = nullptr);
     ~UAVSwarmSimulator();
 
-public:
+private:
     void SetDefaultSwarm();
     void AddItemsToScene();
     void RemoveItemsFromScene();
@@ -70,8 +70,8 @@ signals:
     void UAVProcessed();
 
 private:
-    QTimer timer;
-    const int timeOut = 100; // ms
+    QTimer m_timer;
+    const int m_timeOut = 100; // ms
 
 private:
     Display::Scene* m_scene;
@@ -91,7 +91,7 @@ private:
     Item::UAV* m_currProcessedUAV = nullptr;
 
 private:
-    QUdpSocket* listen;
+    QUdpSocket* m_listen;
 
 private:
     Ui::UAVSwarmSimulator *ui;

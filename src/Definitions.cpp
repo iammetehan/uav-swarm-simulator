@@ -5,9 +5,7 @@ Data::Map::Map()
 
 }
 
-Data::Map::Map(const std::size_t w, const std::size_t h,
-               const std::size_t a, const QString imgPath) :
-    m_w(w), m_h(h), m_a(a)
+Data::Map::Map(const QString imgPath)
 {
     m_image = QImage(imgPath);
 
@@ -18,26 +16,11 @@ Data::Map::Map(const std::size_t w, const std::size_t h,
     {
         for (int k = 0; k < HNumOfPoints(); k++)
         {
-            points.append(QPointF(i * widthOffset,
+            m_points.append(QPointF(i * widthOffset,
                                   k * heightOffset));
         }
     }
 
-}
-
-std::size_t Data::Map::W() const
-{
-    return m_w;
-}
-
-std::size_t Data::Map::H() const
-{
-    return m_h;
-}
-
-std::size_t Data::Map::A() const
-{
-    return m_a;
 }
 
 const QImage &Data::Map::Image() const
@@ -47,7 +30,7 @@ const QImage &Data::Map::Image() const
 
 const QVector<QPointF> &Data::Map::Points() const
 {
-    return points;
+    return m_points;
 }
 
 QVector<QVector<QPointF> > Data::Map::IndexesToPaths(QVector<QVector<int> > indexes) const
@@ -66,7 +49,7 @@ QVector<QPointF> Data::Map::IndexesToPath(QVector<int> indexes) const
     QVector<QPointF> points;
     for (const int& i: indexes)
     {
-        points.append(this->points.at(i));
+        points.append(this->m_points.at(i));
     }
 
     return points;
